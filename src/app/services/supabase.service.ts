@@ -21,31 +21,33 @@ export class SupabaseService {
   }
 
   async subirArchivo(file: File, cedula: string): Promise<string | null> {
-    
     const nombreLimpio = file.name
-    .normalize("NFD")                         // quita tildes
-    .replace(/[\u0300-\u036f]/g, "")         // borra marcas diacríticas
-    .replace(/\s+/g, "_")                    // reemplaza espacios por guiones bajos
-    .toLowerCase();                          // opcional: todo en minúscula
-
-
-    const nombreArchivo = `usuarios/${cedula}_${file.name}`;
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/\s+/g, "_")
+      .replace(/[^\w.-]/g, "") // elimina caracteres raros como paréntesis o tildes especiales
+      .toLowerCase();
+  
+    const nombreArchivo = `usuarios/${cedula}_${nombreLimpio}`;
+  
     const { data, error } = await this.supabase
       .storage
-      .from('files') // nombre del bucket
+      .from('files')
       .upload(nombreArchivo, file, { upsert: true });
+      console.log('Subiendo archivo como:', nombreArchivo);
 
     if (error) {
       console.error('Error al subir archivo:', error.message);
       return null;
     }
-
+  
     const { publicUrl } = this.supabase
       .storage
-      .from('archivos')
+      .from('files') // ojo, aquí decías 'archivos' pero tu bucket es 'files'
       .getPublicUrl(nombreArchivo).data;
-
+  
     return publicUrl;
+    
   }
 
   async guardarRector(cedula: string, archivo_url: string) {

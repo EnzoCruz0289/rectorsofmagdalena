@@ -44,17 +44,8 @@ export class DatasedComponent   {
   
       // 1. Guardar en Firebase
       await this.firebase.createInventory(formData);
-  
-      // 2. Subir archivo a Supabase
-      let archivoUrl: string | null = null;
-      if (this.archivo && cedula) {
-        archivoUrl = await this.supabase.subirArchivo(this.archivo, cedula);
-      }
-  
-      // 3. Guardar cedula + URL en Supabase
-      if (archivoUrl) {
-        await this.supabase.guardarRector(cedula, archivoUrl);
-      }
+      console.log('Archivo recibido:', this.archivo);
+
 
       if (this.incapacidadArchivo && cedula) {
         const incapacidadUrl = await this.supabase.subirArchivo(this.incapacidadArchivo, `${cedula}_incapacidad`);
@@ -76,7 +67,9 @@ export class DatasedComponent   {
       });
   
       this.myForm.reset();
-      this.archivo = undefined!;
+      this.incapacidadArchivo = undefined!;
+      this.hojaDeVidaArchivo = undefined!;
+      
     } catch (error) {
       console.error('Error al enviar:', error);
       Swal.fire({
@@ -88,14 +81,14 @@ export class DatasedComponent   {
   }
 
   onFileChange(event: any, tipo: string) {
-  const archivo = event.target.files[0];
-
-  if (tipo === 'incapacidad') {
-    this.incapacidadArchivo = archivo;
-  } else if (tipo === 'hojaDeVida') {
-    this.hojaDeVidaArchivo = archivo;
+    const archivo = event.target.files[0];
+  
+    if (tipo === 'incapacidad') {
+      this.incapacidadArchivo = archivo;
+    } else if (tipo === 'hojaDeVida') {
+      this.hojaDeVidaArchivo = archivo;
+    }
   }
-}
 
   async enviarFormulario(event: Event) {
     event.preventDefault();
