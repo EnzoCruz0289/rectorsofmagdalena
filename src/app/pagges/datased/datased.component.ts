@@ -37,48 +37,6 @@ export class DatasedComponent   {
     })
   }
 
-  async enviar() {
-    try {
-      const formData = this.myForm.value;
-      const cedula = (this.myForm.get('cedrec')?.value ?? '') as string;
-  
-      // 1. Guardar en Firebase
-      await this.firebase.createInventory(formData);
-      console.log('Archivo recibido:', this.archivo);
-
-
-      if (this.incapacidadArchivo && cedula) {
-        const incapacidadUrl = await this.supabase.subirArchivo(this.incapacidadArchivo, `${cedula}_incapacidad`);
-        // Guardar incapacidadUrl si es necesario
-      }
-      
-      if (this.hojaDeVidaArchivo && cedula) {
-        const hojaVidaUrl = await this.supabase.subirArchivo(this.hojaDeVidaArchivo, `${cedula}_hojadevida`);
-        if (hojaVidaUrl){
-        await this.supabase.guardarRector(cedula, hojaVidaUrl);
-        }
-      }
-  
-      // 4. Confirmación
-      Swal.fire({
-        icon: "success",
-        title: "Registro Exitoso",
-        text: "Gracias por participar"
-      });
-  
-      this.myForm.reset();
-      this.incapacidadArchivo = undefined!;
-      this.hojaDeVidaArchivo = undefined!;
-      
-    } catch (error) {
-      console.error('Error al enviar:', error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Ocurrió un problema al enviar los datos"
-      });
-    }
-  }
 
   onFileChange(event: any, tipo: string) {
     const archivo = event.target.files[0];
@@ -90,21 +48,48 @@ export class DatasedComponent   {
     }
   }
 
-  async enviarFormulario(event: Event) {
-    event.preventDefault();
-
-    if (!this.archivo || !this.cedula) {
-      alert('Falta la cédula o archivo.');
-      return;
-    }
-
-    const archivoUrl = await this.supabase.subirArchivo(this.archivo, this.cedula);
-
-    if (archivoUrl) {
-      await this.supabase.guardarRector(this.cedula, archivoUrl);
-      alert('Rector guardado con éxito.');
-    } else {
-      alert('Error al subir archivo.');
+  async enviar() {
+    try {
+      const formData = this.myForm.value;
+      const cedula: string = this.myForm.get('cedrec')?.value ?? '';
+  
+      // 1. Guardar en Firebase
+      await this.firebase.createInventory(formData);
+  
+      let hojaVidaUrl = '';
+      let incapacidadUrl = '';
+  
+      // 2. Subir hoja de vida
+      if (this.hojaDeVidaArchivo && cedula) {
+        hojaVidaUrl = await this.supabase.subirArchivo(this.hojaDeVidaArchivo, cedula, 'cv') || '';
+      }
+  
+      // 3. Subir incapacidad
+      if (this.incapacidadArchivo && cedula) {
+        incapacidadUrl = await this.supabase.subirArchivo(this.incapacidadArchivo, cedula, 'incapacidad') || '';
+      }
+  
+      // 4. Guardar en Supabase si ambas URLs están
+      if (hojaVidaUrl && incapacidadUrl) {
+        await this.supabase.guardarRector(cedula, hojaVidaUrl, incapacidadUrl);
+      }
+  
+      Swal.fire({
+        icon: "success",
+        title: "Registro Exitoso",
+        text: "Gracias por participar"
+      });
+  
+      this.myForm.reset();
+      this.incapacidadArchivo = undefined!;
+      this.hojaDeVidaArchivo = undefined!;
+    } catch (error) {
+      console.error('Error al enviar:', error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Ocurrió un problema al enviar los datos"
+      });
     }
   }
 

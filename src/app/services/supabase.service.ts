@@ -20,22 +20,13 @@ export class SupabaseService {
     );
   }
 
-  async subirArchivo(file: File, cedula: string): Promise<string | null> {
-    const nombreLimpio = file.name
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/\s+/g, "_")
-      .replace(/[^\w.-]/g, "") // elimina caracteres raros como paréntesis o tildes especiales
-      .toLowerCase();
-  
-    const nombreArchivo = `usuarios/${cedula}_${nombreLimpio}`;
-  
+  async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string | null> {
+    const nombreArchivo = `usuarios/${cedula}_${tipo}_${file.name}`;
     const { data, error } = await this.supabase
       .storage
       .from('files')
       .upload(nombreArchivo, file, { upsert: true });
-      console.log('Subiendo archivo como:', nombreArchivo);
-
+  
     if (error) {
       console.error('Error al subir archivo:', error.message);
       return null;
@@ -43,23 +34,44 @@ export class SupabaseService {
   
     const { publicUrl } = this.supabase
       .storage
-      .from('files') // ojo, aquí decías 'archivos' pero tu bucket es 'files'
+      .from('files')
       .getPublicUrl(nombreArchivo).data;
   
     return publicUrl;
-    
   }
+  
 
-  async guardarRector(cedula: string, archivo_url: string) {
+  async guardarRector(cedula: string, hojaVidaUrl: string, incapacidadUrl: string) {
     const { error } = await this.supabase
-      .from('RectoresSed') // nombre exacto de tu tabla
+      .from('RectoresSed')
       .insert({
-        cedula,
-        archivo_url
+        cedula: cedula.trim(),
+        archivo_cv_url: hojaVidaUrl,
+        archivo_incapacidad_url: incapacidadUrl
       });
-
+  
     if (error) {
       console.error('Error al guardar en la tabla:', error.message);
     }
   }
-}
+
+  async obtenerArchivosPorCedula(cedula: string): Promise<{ cv: string | null, incapacidad: string | null }> {
+    const { data, error } = await this.supabase
+      .from('RectoresSed')
+      .select('archivo_cv_url, archivo_incapacidad_url')
+      .eq('cedula', cedula)
+      .order('id', { ascending: false })  // 👈 ordena por el último insertado
+      .limit(1)
+      .maybeSingle(); // 👈 devuelve null si no encuentra nada, pero no lanza error
+  
+    if (error || !data) {
+      console.error('No se encontraron archivos:', error);
+      return { cv: null, incapacidad: null };
+    }
+  
+    return {
+      cv: data.archivo_cv_url,
+      incapacidad: data.archivo_incapacidad_url
+    };
+  }
+}  
