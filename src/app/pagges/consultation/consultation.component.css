@@ -1,0 +1,91 @@
+body {
+    background-color: rgb(250, 248, 248);
+    margin: 0px;
+    height: max-content;
+    width: 100%;
+}
+
+.dio9 {
+    width: 450px;
+}
+
+.but{
+    background: #1c2bff;  
+    width: 45px;
+    height: 45px;
+}
+
+.but0 {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.dio7 {
+    width: 140px;
+    height: 70px;
+}
+
+.dda {
+    width: 100%;
+}
+
+.dda1 {
+    border: 2px solid rgb(0, 17, 255);
+    border-radius: 10px;
+    width: 100%;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.dda2 {
+    border: 2px solid rgba(0, 0, 0, 0.027);
+    border-radius: 10px;
+}
+
+.dda3 {
+    border: 3px solid rgb(0, 17, 255);
+    border-radius: 5px;
+}
+
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+    align-items: flex-start;
+}
+
+.example-radio-button {
+    margin: 5px;
+}
+
+table {
+    width: 100%;
+}
+
+.mat-mdc-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.custom-button {
+    background-color: #0000002a;
+    color: rgb(253, 0, 0);
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+}
+
+.full-screen-dialog .mat-dialog-container {
+    padding: 250px;  
+    border-radius: 0;  
+  }

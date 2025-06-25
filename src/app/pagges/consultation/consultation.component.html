@@ -1,1 +1,55 @@
-<p>consultation works!</p>
+<body>
+    <div class="d-flex justify-content-center">
+        <div class="col-12 col-sm-11 col-md-10 col-lg-10 mt-2 dda">
+            <div class="">
+                <mat-card class="container-fluid dda1 mb-5" style="background-color: rgba(0, 0, 0, 0.027);">
+                    <mat-card-content>
+                        <div class="mt-4">
+                            <div class="container mt-3">
+    
+                                <div class="row justify-content-center mt-3">
+                                    <div class="col-sm-12 col-md-10 col-lg-10">
+                                      <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Número de documento</mat-label>
+                                        <input matInput type="number" #inputNumber>
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col mt-2">
+                                      <button mat-button class="custom-button mb-3" (click)="applyFilter(inputNumber.value)">
+                                        Aplicar Filtro
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="table-responsive">
+                                  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+                                    <ng-container matColumnDef="municipio">
+                                      <th mat-header-cell *matHeaderCellDef>Municipio</th>
+                                      <td mat-cell *matCellDef="let element">{{ element.municipio }}</td>
+                                    </ng-container>
+                                  
+                                    <ng-container matColumnDef="namerec">
+                                      <th mat-header-cell *matHeaderCellDef>Nombre del Rector</th>
+                                      <td mat-cell *matCellDef="let element">{{ element.namerec }}</td>
+                                    </ng-container>
+                                  
+                                    <ng-container matColumnDef="cedrec">
+                                      <th mat-header-cell *matHeaderCellDef>Cédula</th>
+                                      <td mat-cell *matCellDef="let element">{{ element.cedrec }}</td>
+                                    </ng-container>
+                                  
+                                    <ng-container matColumnDef="ied">
+                                      <th mat-header-cell *matHeaderCellDef>Institución</th>
+                                      <td mat-cell *matCellDef="let element">{{ element.ied }}</td>
+                                    </ng-container>
+                                  
+                                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                    <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+                                  </table>
+                                </div>
+                              </div>
+                            </mat-card-content>
+                          </mat-card>
+                        </div>
+                      </div>
