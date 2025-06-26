@@ -3,6 +3,7 @@ import { FilterTsService } from '../../services/filter.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { SupabaseService } from '../../services/supabase.service';
+import { LoginService } from '../../services/login.service';
 
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
@@ -14,6 +15,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -38,7 +40,8 @@ export class ConsultationComponent {
   filterprest: FilterTsService = inject(FilterTsService);
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
-
+  firebaseservicelog = inject(LoginService);
+  router = inject(Router)
   dataSource: any[] = [];
 
   applyFilter(filterValue: string) {
@@ -50,6 +53,14 @@ export class ConsultationComponent {
     } else {
       this.dataSource = [];
     }
+  }
+
+  onClick() {
+    this.firebaseservicelog.logout()
+      .then(() => {
+        this.router.navigate(['/login']);
+      })
+      .catch();
   }
 
   openDialog(userId: string) {
