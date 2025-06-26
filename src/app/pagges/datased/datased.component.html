@@ -1,99 +1,130 @@
 <title>Gobernación del Magdalena</title>
+
 <body>
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <div class="d-flex justify-content-start align-items-center">
-        <img src=""  alt="logo" />
+        <img src="" alt="logo" />
       </div>
-      <a class="navbar-brand mx-auto " >Secretaria de eduacion departamental</a>
+      <a class="navbar-brand mx-auto ">Secretaria de eduacion departamental</a>
     </div>
   </nav>
 
   <div class="container-fluid main-content" style="height: 89vh;">
     <img src="" alt="ligi" />
-    <div class="inputs-container" >
+    <div class="inputs-container">
       <div class="card ">
-          <form  [formGroup]="myForm" class="row">
-              
-            <div class="col-12 col-sm-6 col-md-4 my-1">
-              <b class="form-group-label">MUNICIPIO</b>
-              <select  formControlName="municipio" placeholder="Seleccione una opción" class="form-control" id="exampleFormControlInput15">
-                  <option value="" disabled selected>Seleccione una opción</option>
-                  <option value="Funcional">Funcional</option>
-                  <option value="Regular">Regular</option>
-                  <option value="Mal estado">Mal estado</option>
-                </select>
+        <form [formGroup]="myForm" class="row">
+
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">MUNICIPIO</b>
+            <select formControlName="municipio" placeholder="Seleccione una opción" class="form-control"
+              id="exampleFormControlInput15">
+              <option value="" disabled selected>Seleccione una opción</option>
+              <option value="Algarrobo">Algarrobo</option>
+              <option value="Aracataca">Aracataca</option>
+              <option value="Ariguaní">Ariguaní</option>
+              <option value="Cerro de San Antonio">Cerro de San Antonio</option>
+              <option value="Chivolo">Chivolo</option>
+              <option value="Ciénaga">Ciénaga</option>
+              <option value="Concordia">Concordia</option>
+              <option value="El Banco">El Banco</option>
+              <option value="El Piñón">El Piñón</option>
+              <option value="El Retén">El Retén</option>
+              <option value="Fundación">Fundación</option>
+              <option value="Guamal">Guamal</option>
+              <option value="Nueva Granada">Nueva Granada</option>
+              <option value="Pedraza">Pedraza</option>
+              <option value="Pijiño del Carmen">Pijiño del Carmen</option>
+              <option value="Pivijay">Pivijay</option>
+              <option value="Plato">Plato</option>
+              <option value="Pueblo Viejo">Pueblo Viejo</option>
+              <option value="Remolino">Remolino</option>
+              <option value="Sabanas de San Ángel">Sabanas de San Ángel</option>
+              <option value="Salamina">Salamina</option>
+              <option value="San Sebastián de Buenavista">San Sebastián de Buenavista</option>
+              <option value="San Zenón">San Zenón</option>
+              <option value="Santa Ana">Santa Ana</option>
+              <option value="Santa Bárbara de Pinto">Santa Bárbara de Pinto</option>
+              <option value="Santa Marta">Santa Marta</option>
+              <option value="Sitionuevo">Sitionuevo</option>
+              <option value="Tenerife">Tenerife</option>
+              <option value="Zapayán">Zapayán</option>
+              <option value="Zona Bananera">Zona Bananera</option>
+            </select>
           </div>
 
-              <div class="col-12 col-sm-6 col-md-4 ">
-                  <b class="form-group-label">INSTITUCION EDUCATIVA</b>
-                  <input class="form-control" formControlName="ied" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 ">
+            <b class="form-group-label">INSTITUCION EDUCATIVA</b>
+            <input class="form-control" formControlName="ied" type="text">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                  <b class="form-group-label">NOMBRE RECTOR</b>
-                  <input class="form-control" formControlName="namerec" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">NOMBRE RECTOR</b>
+            <input class="form-control" formControlName="namerec" type="text">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 ">
-                <b class="form-group-label">CEDULA RECTOR</b>
-                <input class="form-control" formControlName="cedrec" type="text">
-            </div>
+          <div class="col-12 col-sm-6 col-md-4 ">
+            <b class="form-group-label">CEDULA RECTOR</b>
+            <input class="form-control" formControlName="cedrec" type="number">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                  <b class="form-group-label">AREA EDUCATIVA CORRESPONDIENTE AL DOCENTE INCAPACITADO</b>
-                  <input class="form-control" formControlName="areaed" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">AREA EDUCATIVA CORRESPONDIENTE AL DOCENTE INCAPACITADO</b>
+            <input class="form-control" formControlName="areaed" type="text">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                  <b class="form-group-label">CORREO ELECTRONICO DE LA INSTITUCION</b>
-                  <input class="form-control" formControlName="emailied" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">CORREO ELECTRONICO DE LA INSTITUCION</b>
+            <input class="form-control" formControlName="emailied" type="text">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                  <b class="form-group-label">CORREO ELECTRONICO DEL RECTOR</b>
-                  <input class="form-control" formControlName="emalrec" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">CEDULA DOCENTE INCAPACITADO</b>
+            <input class="form-control" formControlName="ceddocente" type="number">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                  <b class="form-group-label">NUMERO DE TELEFONO INSTITUCION</b>
-                  <input class="form-control" formControlName="numied" type="text">
-              </div>
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">NUMERO DE TELEFONO INSTITUCION</b>
+            <input class="form-control" formControlName="numied" type="number">
+          </div>
 
-              <div class="col-12 col-sm-6 col-md-4 my-1">
+          <div class="col-12 col-sm-6 col-md-4 my-1">
 
-                  <b class="form-group-label">NUMERO DE TELEFONO RECTOR </b>
-                  <input class="form-control" formControlName="numrec" type="text">
-              </div>
-              
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">OBSERVACION</b>
-                <select  formControlName="observation" placeholder="Seleccione una opción" class="form-control" id="exampleFormControlInput1">
-                    <option value="" disabled selected>Seleccione una opción</option>
-                    <option value="Funcional">Primera vez</option>
-                    <option value="Regular">Prorroga</option>
-                  </select>
-            </div>
+            <b class="form-group-label">NUMERO DE TELEFONO RECTOR </b>
+            <input class="form-control" formControlName="numrec" type="number">
+          </div>
 
-            <div class="col-12 col-sm-6 col-md-4 my-1">
-              <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
-              <input type="file" (change)="onFileChange($event, 'incapacidad')">
-            </div>
-            
-            <!-- HOJA DE VIDA DEL REEMPLAZO -->
-            <div class="col-12 col-sm-6 col-md-4 my-1">
-              <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
-              <input type="file" (change)="onFileChange($event, 'hojaDeVida')">
-            </div>
-              
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">OBSERVACION</b>
+            <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
+              id="exampleFormControlInput1">
+              <option value="" disabled selected>Seleccione una opción</option>
+              <option value="Funcional">Primera vez</option>
+              <option value="Regular">Prorroga</option>
+            </select>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
+            <input type="file" (change)="onFileChange($event, 'incapacidad')">
+          </div>
+
+          <!-- HOJA DE VIDA DEL REEMPLAZO -->
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
+            <input type="file" (change)="onFileChange($event, 'hojaDeVida')">
+          </div>
+
           <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
-              
-          
-          <button class="ajus" style="background-color: rgb(68, 68, 255); color:white;" (click)="enviar()">AÑADIR</button>
-        </div>
-      </form>
+
+
+            <button class="ajus" style="background-color: rgb(68, 68, 255); color:white;"
+              (click)="enviar()">AÑADIR</button>
+          </div>
+        </form>
       </div>
-  </div>
+    </div>
   </div>
 
   <footer>

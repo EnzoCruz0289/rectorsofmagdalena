@@ -75,21 +75,21 @@
 .top {
   &:before {
     transform: rotate(45deg);
-    background: #00b8d9b9;
+    background: #5be6ffb9;
   }
   &:after {
     transform: rotate(135deg);
-    background: #68b75ebb;
+    background: #70ff5dbb;
   }
 }
 .bottom {
   &:before {
     transform: rotate(-45deg);
-    background: #fec700c9;
+    background: #ffdb57c9;
   }
   &:after {
     transform: rotate(-135deg);
-    background: #f7003ec4;
+    background: #ff4f7bc4;
   }
 }
 

@@ -9,8 +9,8 @@ export class FilterTsService {
   constructor(private firestore: Firestore) {}
 
   getUserFiltered(filtroname: string): Observable<any[]> {
-    const ref = collection(this.firestore, 'information'); // Correcto uso
-    const q = query(ref, where('cedrec', '==', filtroname));
+    const ref = collection(this.firestore, 'information'); 
+    const q = query(ref, where('ceddocente', '==', Number(filtroname)));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
 }

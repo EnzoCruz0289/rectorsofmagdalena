@@ -36,7 +36,7 @@ import { Router } from '@angular/router';
   styleUrl: './consultation.component.css'
 })
 export class ConsultationComponent {
-  displayedColumns: string[] = ['municipio', 'namerec', 'cedrec', 'ied','info'];
+  displayedColumns: string[] = ['municipio', 'namerec', 'ceddocente', 'ied', 'info'];
   filterprest: FilterTsService = inject(FilterTsService);
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
@@ -49,9 +49,12 @@ export class ConsultationComponent {
     if (filterValue) {
       this.filterprest.getUserFiltered(filterValue).subscribe((data: any[]) => {
         this.dataSource = data;
+        console.log('filtro', data)
+
       });
     } else {
       this.dataSource = [];
+      console.log()
     }
   }
 
@@ -66,13 +69,13 @@ export class ConsultationComponent {
   openDialog(userId: string) {
     this.firebaseservice.getUserById(userId).pipe(take(1)).subscribe(data => {
       const dialogRef = this.dialog.open(DialogContentComponent, {
-        data: { 
-          prestamos: [data], 
+        data: {
+          prestamos: [data],
           docId: userId,
         },
-        width: '90%',  
-        height: '90%', 
-        maxWidth: '100vw', 
+        width: '90%',
+        height: '90%',
+        maxWidth: '100vw',
         maxHeight: '100vh',
         panelClass: 'full-screen-dialog'
       });
@@ -97,11 +100,10 @@ export class ConsultationComponent {
       <div mat-dialog-content>
         <div class="table-responsive">
           <table mat-table [dataSource]="dataSourcep" class="mat-elevation-z8 table container">
-
-           
-            <ng-container matColumnDef="emailrec">
-              <th mat-header-cell *matHeaderCellDef> CORREO RECTOR </th>
-              <td mat-cell *matCellDef="let element"> {{element.emailrec}} </td>
+          
+            <ng-container matColumnDef="cedrec">
+              <th mat-header-cell *matHeaderCellDef> CEDULA DEL RECTOR </th>
+              <td mat-cell *matCellDef="let element"> {{element.cedrec}} </td>
             </ng-container>
 
             <ng-container matColumnDef="emailied">
@@ -162,7 +164,7 @@ export class ConsultationComponent {
   ]
 })
 export class DialogContentComponent implements OnInit {
-  displayedColumns: string[] = ['emailrec', 'emailied', 'numied', 'numrec', 'observacion', 'cv', 'incapa'];
+  displayedColumns: string[] = ['cedrec', 'emailied', 'numied', 'numrec', 'observacion', 'cv', 'incapa'];
   dataSourcep: any[] = [];
   archivoCV: string | null = null;
   archivoIncapacidad: string | null = null;
@@ -175,9 +177,9 @@ export class DialogContentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const cedula = this.data?.prestamos?.[0]?.cedrec;  // <- toma la cédula desde Firebase
+    const cedula = this.data?.prestamos?.[0]?.ceddocente;  // <- toma la cédula desde Firebase
     console.log('Buscando archivos para cédula:', cedula);
-  
+
     if (cedula) {
       this.buscarArchivos(cedula);
     }
@@ -185,10 +187,10 @@ export class DialogContentComponent implements OnInit {
 
   async buscarArchivos(cedula: string) {
     const archivos = await this.supabase.obtenerArchivosPorCedula(cedula);
-    
+
     this.archivoCV = archivos.cv;
     this.archivoIncapacidad = archivos.incapacidad;
-  
+
     if (!archivos.cv && !archivos.incapacidad) {
       alert('No se encontraron archivos para esta cédula.');
     }

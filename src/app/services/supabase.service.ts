@@ -45,7 +45,7 @@ export class SupabaseService {
     const { error } = await this.supabase
       .from('RectoresSed')
       .insert({
-        cedula: cedula.trim(),
+        cedula : String(cedula).trim(),
         archivo_cv_url: hojaVidaUrl,
         archivo_incapacidad_url: incapacidadUrl
       });
@@ -74,4 +74,16 @@ export class SupabaseService {
       incapacidad: data.archivo_incapacidad_url
     };
   }
+
+  async existeCedula(cedula: string): Promise<boolean> {
+    const { data, error } = await this.supabase
+      .from('RectoresSed')
+      .select('cedula')
+      .eq('cedula', cedula)
+      .maybeSingle();
+  
+    return !!data;
+  }
+
+
 }  
