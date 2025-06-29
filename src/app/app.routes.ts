@@ -1,25 +1,29 @@
 import { Routes } from '@angular/router';
-import { publicGuard, authGuard } from './guards/auth.guard'; // Ajusta si están en otra carpeta
+import { publicGuard, authGuard } from './guards/auth.guard'; 
+import { AppComponent } from './app.component';
+import { DatasedComponent } from './pagges/datased/datased.component';
+import { LoginComponent } from './auth/login/login.component';
+import { ConsultationComponent } from './pagges/consultation/consultation.component';
 
 export const routes: Routes = [
-  {
-    path: 'consulta',
-    canActivate: [authGuard],
-    loadComponent: () =>
-      import('./pagges/consultation/consultation.component').then(m => m.ConsultationComponent)
-  },
-  {
-    path: 'data',
-    canActivate: [publicGuard],
-    loadComponent: () =>
-      import('./pagges/datased/datased.component').then(m => m.DatasedComponent)
-  },
-  {
-    path: 'login',
-    canActivate: [publicGuard],
-    loadComponent: () =>
-      import('./auth/login/login.component').then(m => m.LoginComponent)
-  },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }
+
+
+  {path:'login', component:LoginComponent},
+
+  {path:'data', component:DatasedComponent},
+
+  {path:'sedmag', component:AppComponent, canActivate:[authGuard],
+
+  children:[
+
+    {path:'', redirectTo:'/consulta',pathMatch:'full'},
+
+    {path:'consulta', component:ConsultationComponent, canActivate:[authGuard]},
+
+    { path: '**', redirectTo: 'consulta' }
+
+  ]
+ },
+
+ {path:'**', redirectTo: '/data'},
 ];

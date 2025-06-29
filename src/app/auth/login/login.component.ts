@@ -28,7 +28,7 @@ export class LoginComponent {
         text: "Bienvenido",
         icon: "success"
       })
-      this.router.navigate(["consulta"],)
+      this.router.navigate(["sedmag/consulta"],)
       console.log(response)
     })
     .catch(error=>Swal.fire({
