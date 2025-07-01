@@ -18,10 +18,22 @@ export class SupabaseService {
         }
       }
     );
+    
+  }
+
+  private limpiarNombreArchivo(nombre: string): string {
+    return nombre
+      .normalize('NFD')                   // Elimina tildes
+      .replace(/[\u0300-\u036f]/g, '')    // Borra diacríticos
+      .replace(/\s+/g, '_')               // Espacios por guiones bajos
+      .replace(/[^\w.-]/g, '');           // Elimina cualquier carácter no válido
   }
 
   async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string | null> {
-    const nombreArchivo = `usuarios/${cedula}_${tipo}_${file.name}`;
+    const nombreLimpio = this.limpiarNombreArchivo(file.name);
+    const nombreArchivo = `usuarios/${cedula}_${tipo}_${nombreLimpio}`;
+
+    
     const { data, error } = await this.supabase
       .storage
       .from('files')
