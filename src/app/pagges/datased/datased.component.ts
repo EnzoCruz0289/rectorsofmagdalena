@@ -99,7 +99,6 @@ export class DatasedComponent   {
         await this.supabase.guardarRector(cedula, hojaVidaUrl, incapacidadUrl);
       }
   
-      // 6. Éxito
       Swal.fire({
         icon: "success",
         title: "Registro Exitoso",

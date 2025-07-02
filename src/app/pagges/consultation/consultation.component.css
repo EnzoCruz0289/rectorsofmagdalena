@@ -36,7 +36,8 @@ body, html {
   }
 
 .navbar {
-    background-color: #1f85f3; 
+  background: #0048b5;
+background: linear-gradient(90deg,rgba(0, 72, 181, 1) 0%, rgba(219, 80, 11, 1) 50%, rgba(219, 99, 24, 1) 100%);
     padding: 10px;
   }
   
@@ -136,8 +137,9 @@ table {
   }
 
   footer {
-    background-color: #0050a7;
-    color: #fff;
+    background: #0048b5;
+    background: linear-gradient(90deg,rgba(0, 72, 181, 1) 0%, rgba(219, 80, 11, 1) 50%, rgba(219, 99, 24, 1) 100%);
+        color: #fff;
     text-align: center;
     padding: 10px;
   }
