@@ -36,7 +36,7 @@ import { LoaderService } from '../../services/loader.service';
   styleUrl: './consultation.component.css'
 })
 export class ConsultationComponent {
-  displayedColumns: string[] = ['municipio', 'namerec', 'ceddocente', 'ied', 'info'];
+  displayedColumns: string[] = ['fechaRegistro', 'municipio', 'namerec', 'ceddocente', 'ied', 'info'];
   filterprest: FilterTsService = inject(FilterTsService);
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
@@ -70,6 +70,26 @@ export class ConsultationComponent {
       this.loaderService.hide(); // 👈 Si no hay filtro, apaga el loader
     }
     
+  }
+
+  applyFilterFech(startInput: string, endInput: string) {
+    this.loaderService.show();
+    const startDate = new Date(startInput);
+    const endDate = new Date(endInput);
+    endDate.setHours(23, 59, 59, 999);
+
+    console.log('Start:', startDate, 'End:', endDate);
+
+    if (startInput && endInput) {
+      this.filterprest.getFechFiltered(startDate, endDate).subscribe(data => {
+        this.dataSource = data;
+        this.loaderService.hide(); // 👈 mover aquí
+      });
+      
+    } else {
+      this.dataSource = [];
+      this.loaderService.hide(); // 👈 Si no hay filtro, apaga el loader
+    }
   }
 
   onClick() {

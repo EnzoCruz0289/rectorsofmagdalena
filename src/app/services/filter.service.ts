@@ -13,4 +13,13 @@ export class FilterTsService {
     const q = query(ref, where('ceddocente', '==', Number(filtroname)));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
+
+  getFechFiltered(startDate: Date, endDate: Date): Observable<any[]> {
+    const ref = collection(this.firestore, 'information'); 
+    const filteredQuery = query(ref, 
+        where('fechaReal', '>=', startDate),
+        where('fechaReal', '<=', endDate)
+      );
+      return collectionData(filteredQuery, { idField: 'id' }) as Observable<any[]>;
+  }
 }
