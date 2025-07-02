@@ -11,10 +11,10 @@
     </div>
   </nav>
 
-  <div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="height: 89vh;">
-    <img src="/SED/public/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-2">
-    <div class="inputs-container">
-      <div class="card ">
+  <div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="min-height: calc(100vh - 100px); padding: 20px ;">
+  <img src="assets/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-2">
+  <div class="inputs-container">
+    <div class="card">
         <form [formGroup]="myForm" class="row">
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
@@ -120,17 +120,24 @@
           <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
 
 
-            <button class="ajus" style="background-color: rgb(68, 68, 255); color:white;"
-              (click)="enviar()">AÑADIR</button>
+            <button type="button" class="ajus" (click)="enviar()">
+              ENVIAR
+            </button>
           </div>
         </form>
       </div>
     </div>
   </div>
 
-  <footer>
-    <div class="container">
-      <strong>&copy; SED</strong>
+  <footer class="main-footer d-flex justify-content-between align-items-center px-3 py-2">
+    <div>
+      <strong>
+        &copy; {{year}} 
+        <a href="https://www.gobernaciondelmagdalena.gov.co/">Gobernación del Magdalena</a>.
+      </strong>
+    </div>
+    <div>
+      <b>Autor:</b> José David Aragón Cruz
     </div>
   </footer>
   </div>

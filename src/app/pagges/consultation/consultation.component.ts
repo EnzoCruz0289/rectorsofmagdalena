@@ -16,7 +16,7 @@ import { CommonModule } from '@angular/common';
 import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-
+import { LoaderService } from '../../services/loader.service';
 
 @Component({
   selector: 'app-consultation',
@@ -41,21 +41,35 @@ export class ConsultationComponent {
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
   firebaseservicelog = inject(LoginService);
+  loaderService = inject(LoaderService)
   router = inject(Router)
   dataSource: any[] = [];
+  year = new Date().getFullYear();
 
+  
   applyFilter(filterValue: string) {
-    filterValue = filterValue.trim();
-    if (filterValue) {
-      this.filterprest.getUserFiltered(filterValue).subscribe((data: any[]) => {
-        this.dataSource = data;
-        console.log('filtro', data)
+    this.loaderService.show();
 
-      });
+    filterValue = filterValue.trim();
+
+    if (filterValue) {
+      this.filterprest.getUserFiltered(filterValue).subscribe({next:(data: any[]) => {
+        this.dataSource = data;
+        this.loaderService.hide(); // 👈 mover aquí
+        // console.log('filtro', data)
+
+      },
+      error: (error) => {
+        // console.error('Error en filtro:', error);
+        this.loaderService.hide(); // 👈 también apagar en error
+      },}
+      );
+
     } else {
       this.dataSource = [];
-      console.log()
+      this.loaderService.hide(); // 👈 Si no hay filtro, apaga el loader
     }
+    
   }
 
   onClick() {
@@ -178,7 +192,7 @@ export class DialogContentComponent implements OnInit {
 
   ngOnInit(): void {
     const cedula = this.data?.prestamos?.[0]?.ceddocente;  // <- toma la cédula desde Firebase
-    console.log('Buscando archivos para cédula:', cedula);
+    // console.log('Buscando archivos para cédula:', cedula);
 
     if (cedula) {
       this.buscarArchivos(cedula);

@@ -3,6 +3,7 @@ import {FormGroup, FormBuilder, Validators, ReactiveFormsModule} from '@angular/
 import { FirebaseService } from '../../services/firebase.service';
 import Swal from 'sweetalert2'
 import { SupabaseService } from '../../services/supabase.service';
+import { LoaderService } from '../../services/loader.service';
 
 
 
@@ -14,14 +15,15 @@ import { SupabaseService } from '../../services/supabase.service';
   styleUrl: './datased.component.css'
 })
 export class DatasedComponent   {
-  firebase = inject(FirebaseService)
   myForm: FormGroup;
   cedula = '';
   archivo!: File;
   incapacidadArchivo!: File;
   hojaDeVidaArchivo!: File;
+  year = new Date().getFullYear();
 
-  constructor(private fb: FormBuilder, private supabase: SupabaseService) {
+  constructor(private fb: FormBuilder, private supabase: SupabaseService,private firebase: FirebaseService,
+    private loaderService: LoaderService) {
 
     this.myForm = this.fb.group({
       municipio:['',Validators.required],
@@ -49,6 +51,8 @@ export class DatasedComponent   {
   }
 
   async enviar() {
+    this.loaderService.show();     // 👈 enciendo el spinner
+
     try {
       const formData = this.myForm.value;
       const cedula: string = this.myForm.get('ceddocente')?.value ?? '';
@@ -106,12 +110,14 @@ export class DatasedComponent   {
       this.incapacidadArchivo = undefined!;
       this.hojaDeVidaArchivo = undefined!;
     } catch (error) {
-      console.error('Error al enviar:', error);
+      // console.error('Error al enviar:', error);
       Swal.fire({
         icon: "error",
         title: "Error",
         text: "Ocurrió un problema al enviar los datos"
       });
+    } finally{
+      this.loaderService.hide();  // 👈 apago el spinner siempre al final
     }
   }
 
