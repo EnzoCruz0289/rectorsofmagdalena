@@ -82,7 +82,7 @@ background: linear-gradient(90deg,rgba(0, 72, 181, 1) 0%, rgba(219, 80, 11, 1) 5
     border: 2px solid rgb(0, 17, 255);
     border-radius: 10px;
     width: 100%;
-    max-width: 1200px;
+    max-width: auto;
     margin: auto;
 }
 

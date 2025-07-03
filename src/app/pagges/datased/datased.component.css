@@ -49,18 +49,18 @@ button{
 
 
 .logo-img {
-  max-height: 170px;
+  max-height: 350px;
   margin: 0 auto 10px auto;
-  margin-top: -42px;
+  margin-top: -90px;
 
 }
 
 
 .card {
   width: 100%;
-  max-width: 1200px;
+  max-width: auto;
   background-color: #d1d1d1;
-  padding: 0px;
+  padding: 15px;
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
   

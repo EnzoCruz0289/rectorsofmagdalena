@@ -71,8 +71,24 @@
           </div>
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
-            <b class="form-group-label">AREA EDUCATIVA CORRESPONDIENTE AL DOCENTE INCAPACITADO</b>
-            <input class="form-control" formControlName="areaed" type="text">
+            <b class="form-group-label">AREA EDUCATIVA DOCENTE INCAPACITADO</b>
+            <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
+            id="exampleFormControlInput1">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Prescolar">Prescolar</option>
+            <option value="Primaria">Primaria</option>
+            <option value="Secundaria">Secundaria</option> 
+          </select>          
+        </div>
+          
+          <div class="col-12 col-sm-6 col-md-4 my-1">
+            <b class="form-group-label">OBSERVACION</b>
+            <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
+              id="exampleFormControlInput1">
+              <option value="" disabled selected>Seleccione una opción</option>
+              <option value="Primera vez">Primera vez</option>
+              <option value="Prorroga">Prorroga</option>
+            </select>
           </div>
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
