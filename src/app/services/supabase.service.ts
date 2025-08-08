@@ -5,7 +5,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
   providedIn: 'root'
 })
 export class SupabaseService {
-  private supabase: SupabaseClient;
+  public supabase: SupabaseClient;
 
   constructor() {
     this.supabase = createClient(
@@ -55,7 +55,7 @@ export class SupabaseService {
 
   async guardarRector(cedula: string, hojaVidaUrl: string, incapacidadUrl: string) {
     const { error } = await this.supabase
-      .from('RectoresSed')
+      .from('IncapacidadesRectores')
       .insert({
         cedula : String(cedula).trim(),
         archivo_cv_url: hojaVidaUrl,
@@ -69,7 +69,7 @@ export class SupabaseService {
 
   async obtenerArchivosPorCedula(cedula: string): Promise<{ cv: string | null, incapacidad: string | null }> {
     const { data, error } = await this.supabase
-      .from('RectoresSed')
+      .from('IncapacidadesRectores')
       .select('archivo_cv_url, archivo_incapacidad_url')
       .eq('cedula', cedula)
       .order('id', { ascending: false })  // 👈 ordena por el último insertado
@@ -89,7 +89,7 @@ export class SupabaseService {
 
   async existeCedula(cedula: string): Promise<boolean> {
     const { data, error } = await this.supabase
-      .from('RectoresSed')
+      .from('IncapacidadesRectores')
       .select('cedula')
       .eq('cedula', cedula)
       .maybeSingle();
@@ -97,5 +97,18 @@ export class SupabaseService {
     return !!data;
   }
 
-
+  async obtenerTodasIncapacidadesPorCedula(cedula: string) {
+    const { data, error } = await this.supabase
+      .from('IncapacidadesRectores')
+      .select('*')
+      .eq('cedula', cedula);
+  
+    if (error) {
+      console.error('Error al obtener incapacidades:', error.message);
+      return [];
+    }
+  
+    return data;
+  }
+  
 }  

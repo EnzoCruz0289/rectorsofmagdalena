@@ -36,7 +36,7 @@ import { LoaderService } from '../../services/loader.service';
   styleUrl: './consultation.component.css'
 })
 export class ConsultationComponent {
-  displayedColumns: string[] = ['fechaRegistro', 'municipio', 'namerec', 'ceddocente', 'ied', 'info'];
+  displayedColumns: string[] = ['municipio', 'namerec', 'ceddocente', 'ied', 'info', ];
   filterprest: FilterTsService = inject(FilterTsService);
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
@@ -45,7 +45,15 @@ export class ConsultationComponent {
   router = inject(Router)
   dataSource: any[] = [];
   year = new Date().getFullYear();
+  totalIncapacidades: number = 0;
 
+  ngOnInit() {
+    this.obtenerTotalDesdeFirebase();
+  }
+
+  async obtenerTotalDesdeFirebase() {
+  this.totalIncapacidades = await this.firebaseservice.contarTodasIncapacidades();
+}
   
   applyFilter(filterValue: string) {
     this.loaderService.show();
@@ -127,62 +135,86 @@ export class ConsultationComponent {
   standalone: true,
   template: `
   <mat-card class="container my-5" style="background-color: rgba(0, 0, 0, 0.027);">
-    <mat-card-content>
-      <div class="d-flex justify-content-center">
-        <h1 mat-dialog-title>Información adicional</h1>
+  <mat-card-content>
+    <div class="d-flex justify-content-center">
+      <h1 mat-dialog-title>Información adicional</h1>
+    </div>
+
+    <div mat-dialog-content>
+      <div class="table-responsive">
+        <table mat-table [dataSource]="dataSourcep" class="mat-elevation-z8 table container">
+
+          <ng-container matColumnDef="cedrec">
+            <th mat-header-cell *matHeaderCellDef> CEDULA DEL RECTOR </th>
+            <td mat-cell *matCellDef="let element"> {{element.cedrec}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="emailied">
+            <th mat-header-cell *matHeaderCellDef> CORREO INSTITUCION </th>
+            <td mat-cell *matCellDef="let element"> {{element.emailied}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="numied">
+            <th mat-header-cell *matHeaderCellDef> NUMERO IED </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="observacion-text">{{element.numied}}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="numrec">
+            <th mat-header-cell *matHeaderCellDef> NUMERO RECTOR </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="observacion-text">{{element.numrec}}</div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="observacion">
+            <th mat-header-cell *matHeaderCellDef> OBSERVACION </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="observacion-text">{{element.observation}}</div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
       </div>
-      <div mat-dialog-content>
-        <div class="table-responsive">
-          <table mat-table [dataSource]="dataSourcep" class="mat-elevation-z8 table container">
-          
-            <ng-container matColumnDef="cedrec">
-              <th mat-header-cell *matHeaderCellDef> CEDULA DEL RECTOR </th>
-              <td mat-cell *matCellDef="let element"> {{element.cedrec}} </td>
-            </ng-container>
+    </div>
 
-            <ng-container matColumnDef="emailied">
-              <th mat-header-cell *matHeaderCellDef> CORREO INSTITUCION </th>
-              <td mat-cell *matCellDef="let element"> {{element.emailied}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="numied">
-              <th mat-header-cell *matHeaderCellDef> NUMERO IED </th>
-              <td mat-cell *matCellDef="let element"> <div class="observacion-text">{{element.numied}}</div> </td>
-            </ng-container>
-
-            <ng-container matColumnDef="numrec">
-              <th mat-header-cell *matHeaderCellDef> NUMERO RECTOR </th>
-              <td mat-cell *matCellDef="let element"> <div class="observacion-text">{{element.numrec}}</div> </td>
-            </ng-container>
-
-            <ng-container matColumnDef="observacion">
-              <th mat-header-cell *matHeaderCellDef> OBSERVACION </th>
-              <td mat-cell *matCellDef="let element"> <div class="observacion-text">{{element.observation}}</div> </td>
-            </ng-container>
-
-            <<ng-container matColumnDef="cv">
-  <th mat-header-cell *matHeaderCellDef> HOJA DE VIDA </th>
-  <td mat-cell *matCellDef="let element">
-    <a *ngIf="archivoCV" [href]="archivoCV" target="_blank">Descargar</a>
-    <span *ngIf="!archivoCV">No disponible</span>
-  </td>
-</ng-container>
-
-<ng-container matColumnDef="incapa">
-  <th mat-header-cell *matHeaderCellDef> INCAPACIDAD </th>
-  <td mat-cell *matCellDef="let element">
-    <a *ngIf="archivoIncapacidad" [href]="archivoIncapacidad" target="_blank">Descargar</a>
-    <span *ngIf="!archivoIncapacidad">No disponible</span>
-  </td>
-</ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </div>
+    <!-- NUEVA TABLA PARA HISTORIAL DE INCAPACIDADES -->
+    <div class="mt-5" *ngIf="listaIncapacidades.length > 0">
+      <h3 class="text-center">Historial de incapacidades</h3>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Días de incapacidad</th>
+              <th>Incapacidad</th>
+              <th>Hoja de vida</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inc of listaIncapacidades">
+              <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ inc.dias_incapacidad }}</td>
+              <td>
+                <a *ngIf="inc.archivo_1_url" [href]="inc.archivo_1_url" target="_blank">Descargar</a>
+                <span *ngIf="!inc.archivo_1_url">No disponible</span>
+              </td>
+              <td>
+                <a *ngIf="inc.archivo_2_url" [href]="inc.archivo_2_url" target="_blank">Descargar</a>
+                <span *ngIf="!inc.archivo_2_url">No disponible</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+    <!-- FIN NUEVA TABLA -->
+
+  </mat-card-content>
+</mat-card>
   `,
   styles: [`
     .observacion-text {
@@ -198,10 +230,11 @@ export class ConsultationComponent {
   ]
 })
 export class DialogContentComponent implements OnInit {
-  displayedColumns: string[] = ['cedrec', 'emailied', 'numied', 'numrec', 'observacion', 'cv', 'incapa'];
+  displayedColumns: string[] = ['cedrec', 'emailied', 'numied', 'numrec', 'observacion',];
   dataSourcep: any[] = [];
   archivoCV: string | null = null;
   archivoIncapacidad: string | null = null;
+  listaIncapacidades: any[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -221,11 +254,12 @@ export class DialogContentComponent implements OnInit {
 
   async buscarArchivos(cedula: string) {
     const archivos = await this.supabase.obtenerArchivosPorCedula(cedula);
-
     this.archivoCV = archivos.cv;
-    this.archivoIncapacidad = archivos.incapacidad;
-
-    if (!archivos.cv && !archivos.incapacidad) {
+  
+    const incapacidades = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
+    this.listaIncapacidades = incapacidades;
+  
+    if (!archivos.cv && incapacidades.length === 0) {
       alert('No se encontraron archivos para esta cédula.');
     }
   }

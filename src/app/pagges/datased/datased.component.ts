@@ -4,6 +4,8 @@ import { FirebaseService } from '../../services/firebase.service';
 import Swal from 'sweetalert2'
 import { SupabaseService } from '../../services/supabase.service';
 import { LoaderService } from '../../services/loader.service';
+import { distinctUntilChanged } from 'rxjs/operators';
+import html2canvas from 'html2canvas';
 
 
 
@@ -12,32 +14,87 @@ import { LoaderService } from '../../services/loader.service';
   standalone: true,
   imports: [ReactiveFormsModule],
   templateUrl: './datased.component.html',
-  styleUrl: './datased.component.css'
+  styleUrls: ['./datased.component.css']  // ✅ aquí corregido
 })
 export class DatasedComponent {
   myForm: FormGroup;
   cedula = '';
   archivo!: File;
-  incapacidadArchivo!: File;
-  hojaDeVidaArchivo!: File;
+  urlArchivo1!: File;
+  urlArchivo2!: File;
   year = new Date().getFullYear();
+  totalIncapacidades: number = 0;
 
   constructor(private fb: FormBuilder, private supabase: SupabaseService, private firebase: FirebaseService,
     private loaderService: LoaderService) {
-
+   
     this.myForm = this.fb.group({
       municipio: ['', Validators.required],
       ied: ['', Validators.required],
       namerec: ['', Validators.required],
       cedrec: ['', Validators.required],
       areaed: ['', Validators.required],
+      days: ['',Validators.required],
       emailied: ['', Validators.required],
       ceddocente: ['', Validators.required],
       numied: ['', Validators.required],
       numrec: ['', Validators.required],
       observation: ['', Validators.required]
     })
+
+    this.myForm.get('observation')?.valueChanges
+  .pipe(distinctUntilChanged())
+  .subscribe((valor: string) => {
+    setTimeout(() => {
+      if (valor?.toLowerCase() === 'prorroga') {
+        this.deshabilitarCamposProrroga();
+      } else {
+        this.habilitarTodosCampos();
+      }
+    }, 0);
+  });
+
+
+
+  
   }
+
+  ngOnInit() {
+    this.obtenerTotalDesdeFirebase();
+  }
+
+  async obtenerTotalDesdeFirebase() {
+  this.totalIncapacidades = await this.firebase.contarTodasIncapacidades();
+}
+
+  deshabilitarCamposProrroga() {
+    const campos = Object.keys(this.myForm.controls);
+    for (const campo of campos) {
+      if (campo !== 'ceddocente' && campo !== 'days' && campo !== 'observation') {
+        this.myForm.get(campo)?.disable();
+        this.myForm.get(campo)?.clearValidators();
+        this.myForm.get(campo)?.updateValueAndValidity();
+      }
+    }
+  }
+  
+  habilitarTodosCampos() {
+  const campos = Object.keys(this.myForm.controls);
+
+  for (const campo of campos) {
+    const control = this.myForm.get(campo);
+    if (!control) continue;
+
+    // Solo habilita si está deshabilitado
+    if (control.disabled) {
+      control.enable({ emitEvent: false }); // evita nuevo valueChanges
+    }
+
+    // Establece validador solo si no lo tiene ya
+    control.setValidators(Validators.required);
+    control.updateValueAndValidity({ emitEvent: false }); // evita loops
+  }
+}
 
 
   onFileChange(event: any, tipo: string) {
@@ -56,89 +113,127 @@ export class DatasedComponent {
     }
 
     if (tipo === 'incapacidad') {
-      this.incapacidadArchivo = archivo;
+      this.urlArchivo1 = archivo;
+      // event.target.value = '';
     } else if (tipo === 'hojaDeVida') {
-      this.hojaDeVidaArchivo = archivo;
+      this.urlArchivo2 = archivo;
+      // event.target.value = '';
     }
   }
 
   async enviar() {
-    this.loaderService.show();     // 👈 enciendo el spinner
+    this.loaderService.show();
 
-    try {
-      const formData = this.myForm.value;
-      const cedula: string = this.myForm.get('ceddocente')?.value ?? '';
+    const formData = this.myForm.getRawValue(); // ✅ CAMBIADO AQUÍ
+    const observation = formData.observation?.toLowerCase();
+    const cedula = String(formData.ceddocente).trim();
+    const fecha = new Date().toISOString();  // para fecha de subida
+    let fechaa = new Date();
+      let mes = (fechaa.getMonth() + 1).toString().padStart(2, '0');
+      let dia = fechaa.getDate().toString().padStart(2, '0');
+      let año = fechaa.getFullYear();
+      let hora = fechaa.getHours().toString().padStart(2, '0');
+      let min = fechaa.getMinutes().toString().padStart(2, '0');
 
-      // 🔍 1. Verificar si la cédula ya existe en Supabase
-      const existe = await this.supabase.existeCedula(cedula);
-
-      let fecha = new Date();
-      let mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
-      let dia = fecha.getDate().toString().padStart(2, '0');
-      let año = fecha.getFullYear();
-      let hora = fecha.getHours().toString().padStart(2, '0');
-      let min = fecha.getMinutes().toString().padStart(2, '0');
-
-      formData.fechaReal = new Date();
+      formData.fechaReal = new Date(); // si quieres mantenerla
       formData.fechaRegistrocomp = `${dia}/${mes}/${año} ${hora}:${min}`;
+      formData.fechaRegistro = new Date(); // esta se usará para filtrar
+    // Validar el formulario primero
+    if (this.myForm.invalid) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Formulario incompleto',
+        text: 'Por favor, complete todos los campos.'
+      });
+      this.myForm.markAllAsTouched();
+      this.loaderService.hide();
+      return;
+    }
 
-      if (this.myForm.invalid) {
+    if (observation === 'prorroga') {
+      const existe = await this.firebase.cedulaExiste(cedula);
+      if (!existe) {
         Swal.fire({
-          icon: "warning",
-          title: "Campos incompletos",
-          text: "Por favor llena todos los campos antes de continuar."
+          icon: 'error',
+          title: 'No puedes enviar',
+          text: 'La cédula no está registrada. No puedes registrar una prórroga.'
         });
+        this.loaderService.hide();
         return;
       }
-
-      if (existe) {
-        Swal.fire({
-          icon: "warning",
-          title: "Cédula ya registrada",
-          text: "Esta cédula ya fue registrada anteriormente."
+    }    
+    
+  
+    try {
+      // 1. Subir archivos
+      let urlArchivo1 = '';
+      let urlArchivo2 = '';
+  
+      if (this.urlArchivo1) {
+        urlArchivo1 = await this.supabase.subirArchivo(this.urlArchivo1, cedula, 'incapacidad') || '';
+      }
+  
+      if (this.urlArchivo2) {
+        urlArchivo2 = await this.supabase.subirArchivo(this.urlArchivo2, cedula, 'cv') || '';
+      }
+  
+      // 2. Obtener número de secuencia
+      const lista = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
+      const numeroSecuencia = lista.length + 1;
+  
+      // 3. Insertar en la tabla Supabase
+      const { error } = await this.supabase.supabase
+        .from('IncapacidadesRectores')
+        .insert({
+          cedula: cedula,
+          archivo_1_url: urlArchivo1,
+          archivo_2_url: urlArchivo2,
+          fecha_incapacidad: formData.fecha_incapacidad || fecha,
+          dias_incapacidad: formData.days,
+          numero_secuencia: numeroSecuencia
         });
-        return; // 🚫 No sigue con el proceso
+  
+      if (error) {
+        console.error('❌ Error al guardar en Supabase:', error.message);
+        Swal.fire({ icon: 'error', title: 'Error al guardar en Supabase' });
+        return;
       }
-
-      // ✅ 2. Guardar en Firebase (solo si la cédula no existe)
-      await this.firebase.createInventory(formData);
-
-      let hojaVidaUrl = '';
-      let incapacidadUrl = '';
-
-      // 3. Subir hoja de vida
-      if (this.hojaDeVidaArchivo && cedula) {
-        hojaVidaUrl = await this.supabase.subirArchivo(this.hojaDeVidaArchivo, cedula, 'cv') || '';
+  
+      // 4. Guardar en Firebase (si aplica)
+      const yaExiste = await this.firebase.cedulaExiste(cedula);
+      if (!yaExiste) {
+        await this.firebase.guardarFormularioPrincipal(formData);
       }
-
-      // 4. Subir incapacidad
-      if (this.incapacidadArchivo && cedula) {
-        incapacidadUrl = await this.supabase.subirArchivo(this.incapacidadArchivo, cedula, 'incapacidad') || '';
-      }
-
-      if (hojaVidaUrl || incapacidadUrl) {
-        await this.supabase.guardarRector(cedula, hojaVidaUrl, incapacidadUrl);
-      }
-
-      Swal.fire({
-        icon: "success",
-        title: "Registro Exitoso",
-        text: "Gracias"
+  
+      await this.firebase.guardarIncapacidad(cedula, formData.days);
+  
+      Swal.fire({ 
+        icon: 'success', 
+        title: 'Guardado correctamente',
+        html: `<b style="font-size:18px; color:#000">IDENTIFICADOR UNICO:</b> <b style="font-size:22px; color:red">   000${this.totalIncapacidades + 1}</b> <br>
+        <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b><b style="font-size:22px; color:red">    ${this.myForm.value.ceddocente}</b>`,
+        didOpen: async () => {
+          await new Promise(resolve => setTimeout(resolve, 300)); 
+          const modal = document.querySelector('.swal2-popup') as HTMLElement;
+    
+          if (modal) {
+            html2canvas(modal).then(canvas => {
+              const imgData = canvas.toDataURL('image/png');
+              const link = document.createElement('a');
+              link.href = imgData;
+              link.download = 'captura_incapacidad.png';
+              link.click();
+            });
+          }
+        }
       });
       this.myForm.reset();
-      this.incapacidadArchivo = undefined!;
-      this.hojaDeVidaArchivo = undefined!;
-    } catch (error) {
-      console.error('Error al enviar:', error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Ocurrió un problema al enviar los datos"
-      });
+  
+    } catch (e) {
+      console.error('Error general:', e);
+      Swal.fire({ icon: 'error', title: 'Error general' });
     } finally {
-      this.loaderService.hide();  // 👈 apago el spinner siempre al final
+      this.loaderService.hide();
     }
   }
-
-
 }

@@ -17,8 +17,8 @@ export class FilterTsService {
   getFechFiltered(startDate: Date, endDate: Date): Observable<any[]> {
     const ref = collection(this.firestore, 'information'); 
     const filteredQuery = query(ref, 
-        where('fechaReal', '>=', startDate),
-        where('fechaReal', '<=', endDate)
+        where('fechaRegistro', '>=', startDate),
+        where('fechaRegistro', '<=', endDate)
       );
       return collectionData(filteredQuery, { idField: 'id' }) as Observable<any[]>;
   }
