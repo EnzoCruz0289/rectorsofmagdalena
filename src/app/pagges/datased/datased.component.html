@@ -11,8 +11,8 @@
     </div>
   </nav>
 
-  <div class="container-fluid d-flex flex-column justify-content-center align-items-center" style="min-height: calc(100vh - 100px); padding: 20px ;">
-  <img src="assets/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-2">
+  <div class="main-content container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1" style="padding: 20px;">
+    <img src="assets/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-2">
   <div class="inputs-container">
     <div class="card">
         <form [formGroup]="myForm" class="row">
@@ -72,7 +72,7 @@
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">AREA EDUCATIVA DOCENTE INCAPACITADO</b>
-            <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
+            <select formControlName="areaed" placeholder="Seleccione una opción" class="form-control"
             id="exampleFormControlInput1">
             <option value="" disabled selected>Seleccione una opción</option>
             <option value="Prescolar">Prescolar</option>
@@ -81,16 +81,6 @@
           </select>          
         </div>
           
-          <div class="col-12 col-sm-6 col-md-4 my-1">
-            <b class="form-group-label">OBSERVACION</b>
-            <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
-              id="exampleFormControlInput1">
-              <option value="" disabled selected>Seleccione una opción</option>
-              <option value="Primera vez">Primera vez</option>
-              <option value="Prorroga">Prorroga</option>
-            </select>
-          </div>
-
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">CORREO ELECTRONICO DE LA INSTITUCION</b>
             <input class="form-control" formControlName="emailied" type="text">
@@ -127,7 +117,6 @@
             <input type="file" (change)="onFileChange($event, 'incapacidad')">
           </div>
 
-          <!-- HOJA DE VIDA DEL REEMPLAZO -->
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
             <input type="file" (change)="onFileChange($event, 'hojaDeVida')">
@@ -145,7 +134,7 @@
     </div>
   </div>
 
-  <footer class="main-footer d-flex justify-content-between align-items-center px-3 py-2">
+  <footer class="main-footer d-flex justify-content-between align-items-center px-3 ">
     <div>
       <strong>
         &copy; {{year}} 
@@ -153,7 +142,7 @@
       </strong>
     </div>
     <div>
-      <b>Autor:</b> José David Aragón Cruz
+      <b>Autor:</b> J. D. A. C.
     </div>
   </footer>
   </div>

@@ -20,7 +20,7 @@ export const routes: Routes = [
 
     {path:'consulta', component:ConsultationComponent, canActivate:[authGuard]},
 
-    { path: '**', redirectTo: 'consulta' }
+    { path: '**', redirectTo: '/consulta' }
 
   ]
  },

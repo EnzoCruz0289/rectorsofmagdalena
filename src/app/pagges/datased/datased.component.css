@@ -1,3 +1,11 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+
 .navbar {
   background-color: #1f85f3; 
   padding: 10px;
@@ -33,11 +41,8 @@ background: linear-gradient(90deg,rgba(0, 72, 181, 1) 0%, rgba(219, 80, 11, 1) 5
 }
 .main-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  padding-top: 20px; 
+  display: block; /* Cambiamos flex para que fluya naturalmente */
+  padding: 20px;
 }
 
 
@@ -49,9 +54,9 @@ button{
 
 
 .logo-img {
-  max-height: 350px;
+  max-height: 330px;
   margin: 0 auto 10px auto;
-  margin-top: -90px;
+  margin-top: -105px; 
 
 }
 
@@ -59,11 +64,13 @@ button{
 .card {
   width: 100%;
   max-width: auto;
+  max-height: 80vh;
+  overflow-y: auto;
   background-color: #d1d1d1;
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-  
+  margin-top: -90px;
   }  
 footer {
   background: #0048b5;
@@ -91,6 +98,11 @@ background: linear-gradient(90deg,rgba(0, 72, 181, 1) 0%, rgba(219, 80, 11, 1) 5
   .main-content .input-container {
     width: 90%;
   }
+}
+
+.inputs-container {
+  width: 100%;
+  max-width: 1300px;
 }
 
 .main-footer {
