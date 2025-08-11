@@ -196,8 +196,8 @@ export class ConsultationComponent {
           </thead>
           <tbody>
             <tr *ngFor="let inc of listaIncapacidades">
-              <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd' }}</td>
-              <td>{{ inc.dias_incapacidad }}</td>
+            <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd hh:mm:ss a' }}</td>
+            <td>{{ inc.dias_incapacidad }}</td>
               <td>
                 <a *ngIf="inc.archivo_1_url" [href]="inc.archivo_1_url" target="_blank">Descargar</a>
                 <span *ngIf="!inc.archivo_1_url">No disponible</span>

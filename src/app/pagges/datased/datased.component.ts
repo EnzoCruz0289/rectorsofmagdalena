@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms'
 import { FirebaseService } from '../../services/firebase.service';
 import Swal from 'sweetalert2'
@@ -23,8 +23,10 @@ export class DatasedComponent {
   urlArchivo1!: File;
   urlArchivo2!: File;
   year = new Date().getFullYear();
-  totalIncapacidades: number = 0;
-
+  // totalIncapacidades: number = 0;
+  @ViewChild('inputArchivo1') inputArchivo1!: ElementRef;
+  @ViewChild('inputArchivo2') inputArchivo2!: ElementRef;
+  
   constructor(private fb: FormBuilder, private supabase: SupabaseService, private firebase: FirebaseService,
     private loaderService: LoaderService) {
    
@@ -59,12 +61,24 @@ export class DatasedComponent {
   
   }
 
-  ngOnInit() {
-    this.obtenerTotalDesdeFirebase();
+//   async obtenerTotalDesdeFirebase() {
+//   this.totalIncapacidades = await this.firebase.contarTodasIncapacidades();
+// }
+//   ngOnInit() {
+//     this.obtenerTotalDesdeFirebase();
+//   }
+
+
+limpiarInputsArchivo() {
+  if (this.inputArchivo1) {
+    (this.inputArchivo1.nativeElement as HTMLInputElement).value = '';
+  }
+  if (this.inputArchivo2) {
+    (this.inputArchivo2.nativeElement as HTMLInputElement).value = '';
   }
 
-  async obtenerTotalDesdeFirebase() {
-  this.totalIncapacidades = await this.firebase.contarTodasIncapacidades();
+  this.urlArchivo1 = undefined!;
+  this.urlArchivo2 = undefined!;
 }
 
   deshabilitarCamposProrroga() {
@@ -166,15 +180,22 @@ export class DatasedComponent {
   
     try {
       // 1. Subir archivos
-      let urlArchivo1 = '';
-      let urlArchivo2 = '';
-  
+      let urlArchivo1: string ='';
+      let urlArchivo2: string ='';
+      const identificadorUnico = await this.firebase.incrementarContador();
+
       if (this.urlArchivo1) {
-        urlArchivo1 = await this.supabase.subirArchivo(this.urlArchivo1, cedula, 'incapacidad') || '';
+        urlArchivo1 = await this.supabase.subirArchivo(this.urlArchivo1, cedula, 'incapacidad');
+        if (!urlArchivo1) {
+          throw new Error('Error al subir el archivo de incapacidad.');
+        }
       }
-  
+      
       if (this.urlArchivo2) {
-        urlArchivo2 = await this.supabase.subirArchivo(this.urlArchivo2, cedula, 'cv') || '';
+        urlArchivo2 = await this.supabase.subirArchivo(this.urlArchivo2, cedula, 'cv');
+        if (!urlArchivo2) {
+          throw new Error('Error al subir el archivo de hoja de vida.');
+        }
       }
   
       // 2. Obtener número de secuencia
@@ -210,7 +231,7 @@ export class DatasedComponent {
       Swal.fire({ 
         icon: 'success', 
         title: 'Guardado correctamente',
-        html: `<b style="font-size:18px; color:#000">IDENTIFICADOR UNICO:</b> <b style="font-size:22px; color:red">   000${this.totalIncapacidades + 1}</b> <br>
+        html: `<b style="font-size:18px; color:#000">IDENTIFICADOR UNICO:</b> <b style="font-size:22px; color:red">000${identificadorUnico}</b> <br>
         <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b><b style="font-size:22px; color:red">    ${this.myForm.value.ceddocente}</b>`,
         didOpen: async () => {
           await new Promise(resolve => setTimeout(resolve, 300)); 
@@ -227,7 +248,10 @@ export class DatasedComponent {
           }
         }
       });
+      this.limpiarInputsArchivo();
       this.myForm.reset();
+      // await this.obtenerTotalDesdeFirebase(); // Actualiza el contador sin recargar la página
+
   
     } catch (e) {
       console.error('Error general:', e);

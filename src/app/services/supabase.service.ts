@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { timestamp } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,19 +30,19 @@ export class SupabaseService {
       .replace(/[^\w.-]/g, '');           // Elimina cualquier carácter no válido
   }
 
-  async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string | null> {
+  async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string> {
     const nombreLimpio = this.limpiarNombreArchivo(file.name);
-    const nombreArchivo = `usuarios/${cedula}_${tipo}_${nombreLimpio}`;
+    const timestampNow = Date.now();
+    const nombreArchivo = `${cedula}/${timestampNow}-${nombreLimpio}`;
 
-    
     const { data, error } = await this.supabase
       .storage
       .from('files')
-      .upload(nombreArchivo, file, { upsert: true });
+    .upload(nombreArchivo, file); 
   
     if (error) {
       console.error('Error al subir archivo:', error.message);
-      return null;
+      throw new Error('No se pudo subir el archivo');
     }
   
     const { publicUrl } = this.supabase
@@ -49,9 +50,12 @@ export class SupabaseService {
       .from('files')
       .getPublicUrl(nombreArchivo).data;
   
+    if (!publicUrl) {
+      throw new Error('No se pudo obtener la URL pública del archivo');
+    }
+  
     return publicUrl;
   }
-  
 
   async guardarRector(cedula: string, hojaVidaUrl: string, incapacidadUrl: string) {
     const { error } = await this.supabase
@@ -70,7 +74,7 @@ export class SupabaseService {
   async obtenerArchivosPorCedula(cedula: string): Promise<{ cv: string | null, incapacidad: string | null }> {
     const { data, error } = await this.supabase
       .from('IncapacidadesRectores')
-      .select('archivo_cv_url, archivo_incapacidad_url')
+      .select('archivo_1_url, archivo_2_url')
       .eq('cedula', cedula)
       .order('id', { ascending: false })  // 👈 ordena por el último insertado
       .limit(1)
@@ -82,8 +86,8 @@ export class SupabaseService {
     }
   
     return {
-      cv: data.archivo_cv_url,
-      incapacidad: data.archivo_incapacidad_url
+      cv: data.archivo_1_url,
+      incapacidad: data.archivo_2_url
     };
   }
 

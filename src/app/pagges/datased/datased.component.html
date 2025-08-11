@@ -110,7 +110,7 @@
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">OBSERVACION</b>
             <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
-              id="exampleFormControlInput1">
+              id="exampleFormControlInput2">
               <option value="" disabled selected>Seleccione una opción</option>
               <option value="Primera vez">Primera vez</option>
               <option value="Prorroga">Prorroga</option>
@@ -119,12 +119,12 @@
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
-            <input type="file" (change)="onFileChange($event, 'incapacidad')">
+            <input type="file"  #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
           </div>
 
           <div class="col-12 col-sm-6 col-md-4 my-1">
             <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
-            <input type="file" (change)="onFileChange($event, 'hojaDeVida')">
+            <input type="file"  #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
           </div>
 
           <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">

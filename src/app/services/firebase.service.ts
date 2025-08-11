@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc} from '@angular/fire/firestore';
+import { runTransaction, Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -60,6 +60,28 @@ export class FirebaseService {
       console.error('❌ Error al contar incapacidades:', error);
       return 0;
     }
+  }
+
+  async incrementarContador(): Promise<number> {
+    const counterDocRef = doc(this._firestore, 'counters', 'incapacidadesCount');
+
+    const nuevoValor = await runTransaction(this._firestore, async (transaction) => {
+      const docSnap = await transaction.get(counterDocRef);
+
+      let currentCount = 0;
+      if (docSnap.exists()) {
+        currentCount = docSnap.data()['total'] || 0;
+      } else {
+        transaction.set(counterDocRef, { total: 0 });
+      }
+
+      const nextCount = currentCount + 1;
+      transaction.update(counterDocRef, { total: nextCount });
+
+      return nextCount;
+    });
+
+    return nuevoValor;
   }
 
 
