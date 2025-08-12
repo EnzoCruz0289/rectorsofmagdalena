@@ -41,7 +41,7 @@ export class SupabaseService {
     .upload(nombreArchivo, file); 
   
     if (error) {
-      console.error('Error al subir archivo:', error.message);
+      // console.error('Error al subir archivo:', error.message);
       throw new Error('No se pudo subir el archivo');
     }
   
@@ -81,7 +81,7 @@ export class SupabaseService {
       .maybeSingle(); // 👈 devuelve null si no encuentra nada, pero no lanza error
   
     if (error || !data) {
-      console.error('No se encontraron archivos:', error);
+      // console.error('No se encontraron archivos:', error);
       return { cv: null, incapacidad: null };
     }
   
@@ -108,7 +108,7 @@ export class SupabaseService {
       .eq('cedula', cedula);
   
     if (error) {
-      console.error('Error al obtener incapacidades:', error.message);
+      // console.error('Error al obtener incapacidades:', error.message);
       return [];
     }
   

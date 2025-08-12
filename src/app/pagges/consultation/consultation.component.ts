@@ -17,6 +17,7 @@ import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoaderService } from '../../services/loader.service';
+import { collection, getDocs, getFirestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-consultation',
@@ -86,7 +87,7 @@ export class ConsultationComponent {
     const endDate = new Date(endInput);
     endDate.setHours(23, 59, 59, 999);
 
-    console.log('Start:', startDate, 'End:', endDate);
+    // console.log('Start:', startDate, 'End:', endDate);
 
     if (startInput && endInput) {
       this.filterprest.getFechFiltered(startDate, endDate).subscribe(data => {
@@ -123,7 +124,7 @@ export class ConsultationComponent {
       });
 
       dialogRef.afterClosed().subscribe(result => {
-        console.log(`Dialog result: ${result}`);
+        // console.log(`Dialog result: ${result}`);
       });
     });
   }
@@ -238,7 +239,8 @@ export class DialogContentComponent implements OnInit {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private supabase: SupabaseService
+    private supabase: SupabaseService,
+    private firebaseService: FirebaseService,
   ) {
     this.dataSourcep = data.prestamos;
   }
@@ -253,14 +255,43 @@ export class DialogContentComponent implements OnInit {
   }
 
   async buscarArchivos(cedula: string) {
-    const archivos = await this.supabase.obtenerArchivosPorCedula(cedula);
-    this.archivoCV = archivos.cv;
+    // console.log("📌 Buscando archivos para cédula:", cedula);
   
-    const incapacidades = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
-    this.listaIncapacidades = incapacidades;
+    // 1️⃣ Firebase
+    const incapacidadesFirebase = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
+    // console.log("✅ Firebase:", incapacidadesFirebase);
   
-    if (!archivos.cv && incapacidades.length === 0) {
-      alert('No se encontraron archivos para esta cédula.');
-    }
+    // 2️⃣ Supabase
+    const incapacidadesSupabase = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
+    // console.log("✅ Supabase:", incapacidadesSupabase);
+  
+    // 3️⃣ CV
+    const archivoCV = await this.supabase.obtenerArchivosPorCedula(cedula);
+    // console.log("✅ Archivo CV:", archivoCV);
+    this.archivoCV = archivoCV?.cv || null;
+  
+    // Función para dejar fecha en formato YYYY-MM-DD
+    const normalizarFecha = (fecha: string) =>
+      new Date(fecha).toISOString().split('T')[0];
+  
+    // 4️⃣ Unir info por fecha normalizada
+    this.listaIncapacidades = incapacidadesFirebase.map(incFb => {
+      const fechaFb = normalizarFecha(incFb.fecha_incapacidad);
+      const match = incapacidadesSupabase.find(
+        incSb => normalizarFecha(incSb.fecha_incapacidad) === fechaFb
+      );
+      return {
+        ...incFb,
+        archivo_1_url: match?.archivo_1_url || null,
+        archivo_2_url: match?.archivo_2_url || null
+      };
+    });
+  
+    // 5️⃣ Ordenar por fecha descendente
+    this.listaIncapacidades.sort((a, b) => {
+      return new Date(b.fecha_incapacidad).getTime() - new Date(a.fecha_incapacidad).getTime();
+    });
   }
+
+  
 }

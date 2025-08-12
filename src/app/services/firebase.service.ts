@@ -23,7 +23,7 @@ export class FirebaseService {
       if (!docSnap.exists()) {
         await setDoc(docRef, data); // Solo crea si NO existe
       } else {
-        console.log("Documento ya existe, no se modifica.");
+        // console.log("Documento ya existe, no se modifica.");
       }
     }
 
@@ -36,7 +36,7 @@ export class FirebaseService {
 
   // Guardar una incapacidad en subcolección con fecha automática
   async guardarIncapacidad(cedula: string, days: number) {
-    const date = new Date().toISOString().split('T')[0];
+    const date = new Date().toISOString().replace('T', ' ');
     const subRef = collection(this._firestore, 'information', cedula, 'incapacidades');
     await addDoc(subRef, { days, date });
   }
@@ -57,7 +57,7 @@ export class FirebaseService {
       return total;
   
     } catch (error) {
-      console.error('❌ Error al contar incapacidades:', error);
+      // console.error('❌ Error al contar incapacidades:', error);
       return 0;
     }
   }
@@ -82,6 +82,22 @@ export class FirebaseService {
     });
 
     return nuevoValor;
+  }
+
+  async obtenerIncapacidadesPorCedula(cedula: string | number): Promise<any[]> {
+    const subRef = collection(
+      this._firestore,
+      'information',
+      String(cedula), // 👈 forzamos string
+      'incapacidades'
+    );
+    
+    const snap = await getDocs(subRef);
+  
+    return snap.docs.map(doc => ({
+      fecha_incapacidad: doc.data()['date'],
+      dias_incapacidad: doc.data()['days']
+    }));
   }
 
 
