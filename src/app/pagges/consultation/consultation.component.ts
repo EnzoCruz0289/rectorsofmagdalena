@@ -17,7 +17,7 @@ import { take } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoaderService } from '../../services/loader.service';
-import { collection, getDocs, getFirestore } from '@angular/fire/firestore';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-consultation',
@@ -47,9 +47,23 @@ export class ConsultationComponent {
   dataSource: any[] = [];
   year = new Date().getFullYear();
   totalIncapacidades: number = 0;
+  claveIngresada: string='';
+  claveActual: string= '';
+
 
   ngOnInit() {
     this.obtenerTotalDesdeFirebase();
+    this.firebaseservice.getPassword()
+  .then(clave => {
+    if (clave) {
+      this.claveActual = clave;
+    } else {
+      console.warn('No hay clave guardada en la base de datos');
+    }
+  })
+  .catch(error => {
+    console.error('Error obteniendo clave:', error);
+  });
   }
 
   async obtenerTotalDesdeFirebase() {
@@ -100,6 +114,26 @@ export class ConsultationComponent {
       this.loaderService.hide(); // 👈 Si no hay filtro, apaga el loader
     }
   }
+
+  sendPassword(){
+    if(!this.claveIngresada.trim()){
+      console.warn('Debe ingresar una clave');
+      return;
+    }else {
+
+      this.firebaseservice.savepassword(this.claveIngresada);
+      console.log("Clave guardada:", this.claveIngresada);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'CAMBIO REALIZADO',
+        text: 'EL CAMBIO DE CONTRASEÑA FUE EXITOSO'
+      });
+
+    }
+    this.claveIngresada = '';
+  }
+  
 
   onClick() {
     this.firebaseservicelog.logout()

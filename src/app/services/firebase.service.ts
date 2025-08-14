@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { runTransaction, Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc} from '@angular/fire/firestore';
+import { runTransaction, Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc, onSnapshot} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 export class FirebaseService {
   private _firestore = inject(Firestore)
   private path = 'information'
+  private path1 = 'claves'
   constructor() { }
 
     getUserById(id: string): Observable<any> {
@@ -15,6 +16,45 @@ export class FirebaseService {
       return docData(document, { idField: 'id' }) as Observable<any>;
     }
     
+    async savepassword (password:any){
+      const documentRef = doc(this._firestore, 'claves/clave-acceso');
+
+      try{
+        await setDoc(documentRef, { clave: password });
+        console.log('Clave guardada correctamente');
+      }
+      catch(error){
+        console.error('Error guardando clave:', error);
+      }
+
+    }
+
+
+    async getPassword(): Promise<string | null> {
+      const documentRef = doc(this._firestore, 'claves/clave-acceso');
+      const docSnap = await getDoc(documentRef);
+    
+      if (docSnap.exists()) {
+        return docSnap.data()?.['clave'] || null;
+      }
+      return null;
+    }
+
+    escucharClave(): Observable<string | null> {
+      return new Observable(observer => {
+        const documentRef = doc(this._firestore, 'claves/clave-acceso');
+        const unsubscribe = onSnapshot(documentRef, docSnap => {
+          if (docSnap.exists()) {
+            observer.next(docSnap.data()['clave'] as string);
+          } else {
+            observer.next(null);
+          }
+        });
+        return () => unsubscribe();
+      });
+    }
+  
+
     // Guardar formulario principal (por cédula)
     async guardarFormularioPrincipal(data: any) {
       const docRef = doc(this._firestore, `information/${data.ceddocente}`);

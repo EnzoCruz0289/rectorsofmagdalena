@@ -5,6 +5,51 @@ html, body {
   overflow-x: hidden;
 }
 
+.bloqueo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Centrado vertical y horizontal */
+  background-color: #f4f4f4;
+}
+
+.bloqueo-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 300px;
+}
+
+.input-clave {
+  width: 100%;
+  padding: 10px;
+  margin: 1rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn-verificar {
+  background-color: #4cafef;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-verificar:hover {
+  background-color: #3a9bdc;
+}
+
+.error {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 14px;
+}
 
 .navbar {
   background-color: #1f85f3; 

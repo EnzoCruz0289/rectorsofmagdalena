@@ -1,4 +1,8 @@
 <body>
+
+  
+
+
   <nav class="page-wrapper">
     <nav class="navbar navbar-expand-lg">
       <div class="container-fluid">
@@ -8,15 +12,34 @@
         <strong class="navbar-brand mx-auto ">MODULO PLANTA</strong>
       </div>
     </nav>
-
-    <ul class="navbar-nav ms-2" style="list-style: none; padding-left: 0;">
-      <li class="nav-item">
-        <a class="nav-link d-flex align-items-center gap-2 text-dark" (click)="onClick()" style="width: auto; cursor: pointer;">
-          <i class="fa-solid fa-right-from-bracket"></i>
-          <span>Salir</span>
-        </a>
-      </li>
-    </ul>
+    <div class="container-fluid">
+    <div class="row align-items-start">
+  
+      <div class="col-12 col-sm-4 col-md-4 my-1 mt-4">
+        <ul class="navbar-nav ms-2" style="list-style: none; padding-left: 0;">
+          <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 text-dark" (click)="onClick()" style="width: auto; cursor: pointer;">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span>Salir</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    
+      <div class="col-12 col-sm-4 col-md-4 my-1">
+        <b class="form-group-label">Clave de acceso rectores</b>
+        <input class="form-control mb-2" type="text" [(ngModel)]="claveIngresada" placeholder="Ingrese clave">
+        <button class="btn btn-primary" (click)="sendPassword()">Cambiar clave</button>
+      </div>
+    
+      <div class="col-12 col-sm-4 col-md-4 my-1">
+        <b class="form-group-label">Clave actual</b>
+        <input class="form-control" type="text" [value]="claveActual" readonly>
+      </div>
+    
+    </div>
+    </div>
+    
 
     <div style="display: flex; justify-content: flex-end; padding: 10px;">
       <span style="background-color: #4CAF50; color: white; padding: 6px 12px; border-radius: 12px;">

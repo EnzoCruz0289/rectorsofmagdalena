@@ -6,13 +6,15 @@ import { SupabaseService } from '../../services/supabase.service';
 import { LoaderService } from '../../services/loader.service';
 import { distinctUntilChanged } from 'rxjs/operators';
 import html2canvas from 'html2canvas';
-
+import { MatInputModule } from '@angular/material/input';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-datased',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule,MatInputModule,CommonModule,FormsModule],
   templateUrl: './datased.component.html',
   styleUrls: ['./datased.component.css']  // ✅ aquí corregido
 })
@@ -26,6 +28,9 @@ export class DatasedComponent {
   // totalIncapacidades: number = 0;
   @ViewChild('inputArchivo1') inputArchivo1!: ElementRef;
   @ViewChild('inputArchivo2') inputArchivo2!: ElementRef;
+  accesoPermitido = false;
+  claveIngresada = '';
+  errorClave = false;
   
   constructor(private fb: FormBuilder, private supabase: SupabaseService, private firebase: FirebaseService,
     private loaderService: LoaderService) {
@@ -41,7 +46,8 @@ export class DatasedComponent {
       ceddocente: ['', Validators.required],
       numied: ['', Validators.required],
       numrec: ['', Validators.required],
-      observation: ['', Validators.required]
+      observation: ['', Validators.required],
+      numsac: ['', Validators.required]
     })
 
     this.myForm.get('observation')?.valueChanges
@@ -56,9 +62,6 @@ export class DatasedComponent {
     }, 0);
   });
 
-
-
-  
   }
 
 //   async obtenerTotalDesdeFirebase() {
@@ -68,6 +71,47 @@ export class DatasedComponent {
 //     this.obtenerTotalDesdeFirebase();
 //   }
 
+
+ngOnInit() {
+  if (localStorage.getItem('accesoDatased') === 'true') {
+    this.accesoPermitido = true;
+
+    // Guardar clave actual
+    this.firebase.getPassword().then(clave => {
+      localStorage.setItem('claveUsada', clave || '');
+    });
+
+    // Escuchar cambios de clave
+    this.firebase.escucharClave().subscribe(nuevaClave => {
+      const claveGuardada = localStorage.getItem('claveUsada');
+      if (nuevaClave && nuevaClave !== claveGuardada) {
+        localStorage.removeItem('accesoDatased');
+        localStorage.removeItem('claveUsada');
+        this.accesoPermitido = false;
+        Swal.fire({
+          icon: 'info',
+          title: 'Contraseña actualizada',
+          text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
+        });
+      }
+    });
+  }
+}
+
+
+async verificarClave() {
+  const claveCorrecta = await this.firebase.getPassword();
+
+  if (claveCorrecta && this.claveIngresada === claveCorrecta) {
+    this.accesoPermitido = true;
+    this.errorClave = false;
+    localStorage.setItem('accesoDatased', 'true');
+  } else {
+    this.errorClave = true;
+    alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
+    this.claveIngresada = '';
+  }
+}
 
 limpiarInputsArchivo() {
   if (this.inputArchivo1) {
