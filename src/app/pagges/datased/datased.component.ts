@@ -31,6 +31,7 @@ export class DatasedComponent {
   accesoPermitido = false;
   claveIngresada = '';
   errorClave = false;
+  step = 1;
   
   constructor(private fb: FormBuilder, private supabase: SupabaseService, private firebase: FirebaseService,
     private loaderService: LoaderService) {
@@ -304,4 +305,17 @@ limpiarInputsArchivo() {
       this.loaderService.hide();
     }
   }
+
+  nextStep() {
+    if (this.step < 3) {
+      this.step++;
+    }
+  }
+
+  prevStep() {
+    if (this.step > 1) {
+      this.step--;
+    }
+  }
+
 }

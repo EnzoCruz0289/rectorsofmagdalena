@@ -28,122 +28,174 @@
         </div>
       </nav>
     
+
       <div class="main-content container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1" style="padding: 20px;">
         <img src="assets/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-2">
       <div class="inputs-container">
         <div class="card">
-            <form [formGroup]="myForm" class="row">
+            <form [formGroup]="myForm" >
     
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">MUNICIPIO</b>
-                <select formControlName="municipio" placeholder="Seleccione una opción" class="form-control"
-                  id="exampleFormControlInput15">
-                  <option value="" disabled selected>Seleccione una opción</option>
-                  <option value="Algarrobo">Algarrobo</option>
-                  <option value="Aracataca">Aracataca</option>
-                  <option value="Ariguaní">Ariguaní</option>
-                  <option value="Cerro de San Antonio">Cerro de San Antonio</option>
-                  <option value="Chivolo">Chivolo</option>
-                  <option value="Ciénaga">Ciénaga</option>
-                  <option value="Concordia">Concordia</option>
-                  <option value="El Banco">El Banco</option>
-                  <option value="El Piñón">El Piñón</option>
-                  <option value="El Retén">El Retén</option>
-                  <option value="Fundación">Fundación</option>
-                  <option value="Guamal">Guamal</option>
-                  <option value="Nueva Granada">Nueva Granada</option>
-                  <option value="Pedraza">Pedraza</option>
-                  <option value="Pijiño del Carmen">Pijiño del Carmen</option>
-                  <option value="Pivijay">Pivijay</option>
-                  <option value="Plato">Plato</option>
-                  <option value="Pueblo Viejo">Pueblo Viejo</option>
-                  <option value="Remolino">Remolino</option>
-                  <option value="Sabanas de San Ángel">Sabanas de San Ángel</option>
-                  <option value="Salamina">Salamina</option>
-                  <option value="San Sebastián de Buenavista">San Sebastián de Buenavista</option>
-                  <option value="San Zenón">San Zenón</option>
-                  <option value="Santa Ana">Santa Ana</option>
-                  <option value="Santa Bárbara de Pinto">Santa Bárbara de Pinto</option>
-                  <option value="Santa Marta">Santa Marta</option>
-                  <option value="Sitionuevo">Sitionuevo</option>
-                  <option value="Tenerife">Tenerife</option>
-                  <option value="Zapayán">Zapayán</option>
-                  <option value="Zona Bananera">Zona Bananera</option>
-                </select>
-              </div>
+
+      <div *ngIf="step === 1" class="row">
+        <h3>DATOS PROFESOR INCAPACITADO</h3>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">MUNICIPIO</b>
+          <select formControlName="municipio" placeholder="Seleccione una opción" class="form-control"
+            id="exampleFormControlInput15">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Algarrobo">Algarrobo</option>
+            <option value="Aracataca">Aracataca</option>
+            <option value="Ariguaní">Ariguaní</option>
+            <option value="Cerro de San Antonio">Cerro de San Antonio</option>
+            <option value="Chivolo">Chivolo</option>
+            <option value="Ciénaga">Ciénaga</option>
+            <option value="Concordia">Concordia</option>
+            <option value="El Banco">El Banco</option>
+            <option value="El Piñón">El Piñón</option>
+            <option value="El Retén">El Retén</option>
+            <option value="Fundación">Fundación</option>
+            <option value="Guamal">Guamal</option>
+            <option value="Nueva Granada">Nueva Granada</option>
+            <option value="Pedraza">Pedraza</option>
+            <option value="Pijiño del Carmen">Pijiño del Carmen</option>
+            <option value="Pivijay">Pivijay</option>
+            <option value="Plato">Plato</option>
+            <option value="Pueblo Viejo">Pueblo Viejo</option>
+            <option value="Remolino">Remolino</option>
+            <option value="Sabanas de San Ángel">Sabanas de San Ángel</option>
+            <option value="Salamina">Salamina</option>
+            <option value="San Sebastián de Buenavista">San Sebastián de Buenavista</option>
+            <option value="San Zenón">San Zenón</option>
+            <option value="Santa Ana">Santa Ana</option>
+            <option value="Santa Bárbara de Pinto">Santa Bárbara de Pinto</option>
+            <option value="Santa Marta">Santa Marta</option>
+            <option value="Sitionuevo">Sitionuevo</option>
+            <option value="Tenerife">Tenerife</option>
+            <option value="Zapayán">Zapayán</option>
+            <option value="Zona Bananera">Zona Bananera</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">INSTITUCION EDUCATIVA</b>
+          <input class="form-control" formControlName="ied" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">NOMBRE</b>
+          <input class="form-control" formControlName="namerec" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">CEDULA </b>
+          <input class="form-control" formControlName="cedrec" type="number">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">AREA EDUCATIVA DOCENTE INCAPACITADO</b>
+          <select formControlName="areaed" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput1">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Docente de Prescolar">Docente de Prescolar</option>
+          <option value="Docente de Primaria">Docente de Primaria</option>
+          <option value="Docente de Matematica">Docente de Matematicas</option> 
+          <option value="Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia">Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia</option>
+          <option value="Docente de humanidades y lengua castellana">Docente de humanidades y lengua castellana</option> 
+          <option value="Docente de ciencias naturales y educacion ambiental">Docente de ciencias naturales y educacion ambiental</option> 
+          <option value="Docente de ciencias naturales - quimica">Docente de ciencias naturales - quimica</option> 
+          <option value="Docente de ciencias naturales - fisica">Docente de ciencias naturales - fisica</option> 
+          <option value="Docente de tecnologia e informatica">Docente de tecnologia e informatica</option> 
+          <option value="Docente de Idioma extranjero ingles">Docente de idioma extranjero - ingles</option> 
+          <option value="Docente en educacion religiosa">Docente en educacion religiosa</option> 
+          <option value="Docente en educacion artistica - danzas">Docente en educacion artistica - danzas</option> 
+          <option value="Docente en educacion artistica - artes plasticas">Docente en educacion artistica - artes plasticas</option> artes plasticas
+          <option value="Docente en educacion artistica - artes escenicas">Docente en educacion artistica - artes escenicas</option> 
+          <option value="Docente en educacion artistica - musica">Docente en educacion artistica - musica</option> 
+          <option value="Docente en educacion fisica, recreacion y deporte">Docente en educacion fisica, recreacion y deporte</option> 
+          <option value="Docente en educacion etica y valores humanos">Docente en educacion etica y valores humanos</option> 
+          <option value="Docente de ciencias economicas y politicas">Docente de ciencias economicas y politicas</option> 
+          <option value="Docente de filosofia">Docente de filosofia</option> 
+        </select>   
+               
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">NUMERO DE INCAPACIDAD</b>
+        <input class="form-control" formControlName="emailied" type="email">
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">TIPO DE VINCULACION</b>
+        <select formControlName="ceddocente" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput2">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Vacancia temporal">Vacancia temporal</option>
+          <option value="Vacancia definitiva">Vacancia definitiva</option>
+          <option value="En propiedad">En propiedad</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">CARGO</b>
+        <select formControlName="numied" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput2">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Docente de area">Docente de area</option>
+          <option value="Docente orientador">Docente orientador</option>
+          <option value="Directivo docente - Rector">Directivo docente - Rector</option>
+          <option value="Directivo docente - Coordinaro">Directivo docente - Coordinador</option>
+          <option value="Directivo docente - Director rural">Directivo docente - Director rural</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">TIPO DE INCAPACIDAD</b>
+        <select formControlName="numrec" placeholder="Seleccione una opción" class="form-control"
+        id="exampleFormControlInput2">
+        <option value="" disabled selected>Seleccione una opción</option>
+        <option value="Licencia de enfermedad">Licencia de enfermedad</option>
+        <option value="Licencia de maternidad">Licencia de maternidad</option>
+      </select>      
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">DIAS DE INCAPACIDAD</b>
+      <input class="form-control" formControlName="days" type="number">
+    </div>
     
-              <div class="col-12 col-sm-6 col-md-4 ">
-                <b class="form-group-label">INSTITUCION EDUCATIVA</b>
-                <input class="form-control" formControlName="ied" type="text">
-              </div>
     
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">NOMBRE RECTOR</b>
-                <input class="form-control" formControlName="namerec" type="text">
-              </div>
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">NUMERO SAC </b>
+      <input class="form-control" formControlName="numsac" type="text">
+    </div>
+
+        <button (click)="nextStep()">Siguiente</button>
+      </div>
+      
+      <div *ngIf="step === 2" class="row">
+        <h3>DATOS PROFESOR REMPLAZO</h3>
+        <input placeholder="Correo" type="email">
+        <button (click)="prevStep()">Atrás</button>
+        <button (click)="nextStep()">Siguiente</button>
+      </div>
+      
+      <div *ngIf="step === 3" class="row">
+        <h3>DATOS PROFESOR REMPLAZO</h3>
+        <input placeholder="Teléfono" type="text">
+        <button (click)="prevStep()">Atrás</button>
+        <button (click)="enviar()">Enviar</button>
+      </div>
+
     
-              <div class="col-12 col-sm-6 col-md-4 ">
-                <b class="form-group-label">CEDULA RECTOR</b>
-                <input class="form-control" formControlName="cedrec" type="number">
-              </div>
-    
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">AREA EDUCATIVA DOCENTE INCAPACITADO</b>
-                <select formControlName="areaed" placeholder="Seleccione una opción" class="form-control"
-                id="exampleFormControlInput1">
-                <option value="" disabled selected>Seleccione una opción</option>
-                <option value="Docente de Prescolar">Docente de Prescolar</option>
-                <option value="Docente de Primaria">Docente de Primaria</option>
-                <option value="Docente de Matematica">Docente de Matematicas</option> 
-                <option value="Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia">Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia</option>
-                <option value="Docente de humanidades y lengua castellana">Docente de humanidades y lengua castellana</option> 
-                <option value="Docente de ciencias naturales y educacion ambiental">Docente de ciencias naturales y educacion ambiental</option> 
-                <option value="Docente de ciencias naturales - quimica">Docente de ciencias naturales - quimica</option> 
-                <option value="Docente de ciencias naturales - fisica">Docente de ciencias naturales - fisica</option> 
-                <option value="Docente de tecnologia e informatica">Docente de tecnologia e informatica</option> 
-                <option value="Docente de Idioma extranjero ingles">Docente de idioma extranjero - ingles</option> 
-                <option value="Docente en educacion religiosa">Docente en educacion religiosa</option> 
-                <option value="Docente en educacion artistica - danzas">Docente en educacion artistica - danzas</option> 
-                <option value="Docente en educacion artistica - artes plasticas">Docente en educacion artistica - artes plasticas</option> artes plasticas
-                <option value="Docente en educacion artistica - artes escenicas">Docente en educacion artistica - artes escenicas</option> 
-                <option value="Docente en educacion artistica - musica">Docente en educacion artistica - musica</option> 
-                <option value="Docente en educacion fisica, recreacion y deporte">Docente en educacion fisica, recreacion y deporte</option> 
-                <option value="Docente en educacion etica y valores humanos">Docente en educacion etica y valores humanos</option> 
-                <option value="Docente de ciencias economicas y politicas">Docente de ciencias economicas y politicas</option> 
-                <option value="Docente de filosofia">Docente de filosofia</option> 
-    
-              </select>          
-            </div>
               
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">CORREO ELECTRONICO DE LA INSTITUCION</b>
-                <input class="form-control" formControlName="emailied" type="email">
-              </div>
+              
+              
     
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">CEDULA DOCENTE INCAPACITADO</b>
-                <input class="form-control" formControlName="ceddocente" type="number">
-              </div>
+             
     
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">DIAS DE INCAPACIDAD</b>
-                <input class="form-control" formControlName="days" type="number">
-              </div>
+            
     
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">NUMERO DE TELEFONO INSTITUCION</b>
-                <input class="form-control" formControlName="numied" type="number">
-              </div>
-    
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">NUMERO DE TELEFONO RECTOR </b>
-                <input class="form-control" formControlName="numrec" type="number">
-              </div>
-    
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">NUMERO SAC </b>
-                <input class="form-control" formControlName="numsac" type="text">
-              </div>
     
               <div class="col-12 col-sm-6 col-md-4 my-1">
                 <b class="form-group-label">TIPO DE TRAMITE</b>
