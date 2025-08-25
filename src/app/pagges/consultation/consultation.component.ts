@@ -4,7 +4,6 @@ import { FirebaseService } from '../../services/firebase.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { SupabaseService } from '../../services/supabase.service';
 import { LoginService } from '../../services/login.service';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -223,9 +222,11 @@ export class ConsultationComponent {
         <table class="table table-striped table-bordered">
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Días de incapacidad</th>
-              <th>Incapacidad</th>
+              <th>Fecha Inicio</th>
+              <th>Fecha Fin</th>
+              <th>Dias</th>
+              <th>Cedula</th>
+              <th>Nombre</th>
               <th>Hoja de vida</th>
             </tr>
           </thead>
@@ -301,7 +302,7 @@ export class DialogContentComponent implements OnInit {
 
   async buscarArchivos(cedula: string) {
     // console.log("📌 Buscando archivos para cédula:", cedula);
-  const { incapacidades, totalDias } = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
+    const { incapacidades, totalDias } = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
 
   
     const incapacidadesSupabase = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);

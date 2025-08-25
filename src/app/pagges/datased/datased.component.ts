@@ -186,46 +186,46 @@ export class DatasedComponent {
     }
   }
 
-// ngOnInit() {
-//   if (localStorage.getItem('accesoDatased') === 'true') {
-//     this.accesoPermitido = true;
+ ngOnInit() {
+   if (localStorage.getItem('accesoDatased') === 'true') {
+     this.accesoPermitido = true;
 
-//     // Guardar clave actual
-//     this.firebase.getPassword().then(clave => {
-//       localStorage.setItem('claveUsada', clave || '');
-//     });
+     // Guardar clave actual
+     this.firebase.getPassword().then(clave => {
+       localStorage.setItem('claveUsada', clave || '');
+     });
 
-//     // Escuchar cambios de clave
-//     this.firebase.escucharClave().subscribe(nuevaClave => {
-//       const claveGuardada = localStorage.getItem('claveUsada');
-//       if (nuevaClave && nuevaClave !== claveGuardada) {
-//         localStorage.removeItem('accesoDatased');
-//         localStorage.removeItem('claveUsada');
-//         this.accesoPermitido = false;
-//         Swal.fire({
-//           icon: 'info',
-//           title: 'Contraseña actualizada',
-//           text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
-//         });
-//       }
-//     });
-//   }
-// }
+     // Escuchar cambios de clave
+     this.firebase.escucharClave().subscribe(nuevaClave => {
+       const claveGuardada = localStorage.getItem('claveUsada');
+       if (nuevaClave && nuevaClave !== claveGuardada) {
+         localStorage.removeItem('accesoDatased');
+         localStorage.removeItem('claveUsada');
+         this.accesoPermitido = false;
+         Swal.fire({
+           icon: 'info',
+           title: 'Contraseña actualizada',
+           text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
+         });
+       }
+     });
+   }
+ }
 
 
-// async verificarClave() {
-//   const claveCorrecta = await this.firebase.getPassword();
+ async verificarClave() {
+   const claveCorrecta = await this.firebase.getPassword();
 
-//   if (claveCorrecta && this.claveIngresada === claveCorrecta) {
-//     this.accesoPermitido = true;
-//     this.errorClave = false;
-//     localStorage.setItem('accesoDatased', 'true');
-//   } else {
-//     this.errorClave = true;
-//     alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
-//     this.claveIngresada = '';
-//   }
-// }
+   if (claveCorrecta && this.claveIngresada === claveCorrecta) {
+     this.accesoPermitido = true;
+     this.errorClave = false;
+     localStorage.setItem('accesoDatased', 'true');
+   } else {
+     this.errorClave = true;
+     alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
+     this.claveIngresada = '';
+   }
+ }
 
 limpiarInputsArchivo() {
   if (this.inputArchivo1) {
@@ -354,8 +354,8 @@ limpiarInputsArchivo() {
         await this.firebase.guardarFormularioPrincipal(formData);
       }
   
-      await this.firebase.guardarIncapacidad(cedula, formData.days,   this.myForm.value.nombreRemplazo || null
-);
+      await this.firebase.guardarIncapacidad(cedula, formData.days, this.myForm.value.nombreRemplazo || null, this.myForm.value.fechaInicio || null, this.myForm.value.fechaFin || null, this.myForm.value.cedulaRemplazo || null);
+          
   
       Swal.fire({ 
         icon: 'success', 

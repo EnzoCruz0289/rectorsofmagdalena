@@ -59,11 +59,12 @@ export class FirebaseService {
     async guardarFormularioPrincipal(data: any) {
       const docRef = doc(this._firestore, `information/${data.cedulaDocente}`);
       const docSnap = await getDoc(docRef);
-    
+      const { days, nombreRemplazo, fechaInicio, fechaFin, cedulaRemplazo, ...dataGeneral } = data;
+
       if (!docSnap.exists()) {
-        await setDoc(docRef, data); // Solo crea si NO existe
+        await setDoc(docRef, dataGeneral); 
       } else {
-        // console.log("Documento ya existe, no se modifica.");
+        console.log("Documento ya existe, no se modifica.");
       }
     }
 
@@ -75,10 +76,16 @@ export class FirebaseService {
   }
 
   // Guardar una incapacidad en subcolección con fecha automática
-  async guardarIncapacidad(cedula: string, days: number, nombreRemplazo:string) {
+  async guardarIncapacidad(cedula: string, days: number, nombreRemplazo:string, fechaInicio:string, fechaFin:string, cedulaRemplazo:number) {
     const date = new Date().toISOString().replace('T', ' ');
     const subRef = collection(this._firestore, 'information', cedula, 'incapacidades');
-    await addDoc(subRef, { days, date,     nombreRemplazo: nombreRemplazo ?? null  // 👈 evita undefined
+    await addDoc(subRef, { 
+      days, 
+      date, 
+      nombreRemplazo: nombreRemplazo ?? null,
+      fechaInicio: fechaInicio ?? null,  
+      fechaFin: fechaFin ?? null,  
+      cedulaRemplazo: cedulaRemplazo ?? null
  });
   }
 
