@@ -9,14 +9,17 @@ import html2canvas from 'html2canvas';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
 @Component({
   selector: 'app-datased',
   standalone: true,
-  imports: [ReactiveFormsModule,MatInputModule,CommonModule,FormsModule],
+  imports: [ReactiveFormsModule,MatInputModule,CommonModule,FormsModule,MatDatepickerModule,MatFormFieldModule,MatNativeDateModule  ],
   templateUrl: './datased.component.html',
-  styleUrls: ['./datased.component.css']  // ✅ aquí corregido
+  styleUrls: ['./datased.component.css']  
 })
 export class DatasedComponent {
   myForm: FormGroup;
@@ -39,19 +42,26 @@ export class DatasedComponent {
     this.myForm = this.fb.group({
       municipio: ['', Validators.required],
       ied: ['', Validators.required],
-      namerec: ['', Validators.required],
-      cedrec: ['', Validators.required],
-      areaed: ['', Validators.required],
+      nombreDocente: ['', Validators.required],
+      tipoVinculacion: ['', Validators.required],
+      areaEducativa: ['', Validators.required],
       days: ['',Validators.required],
-      emailied: ['', Validators.required],
-      ceddocente: ['', Validators.required],
-      numied: ['', Validators.required],
-      numrec: ['', Validators.required],
-      observation: ['', Validators.required],
-      numsac: ['', Validators.required]
+      numeroIncapacidad: ['', Validators.required],
+      cedulaDocente: ['', Validators.required],
+      cargo: ['', Validators.required],
+      tipoIncapacidad: ['', Validators.required],
+      tipoTramiteDocente: ['', Validators.required],
+      numsac: ['', Validators.required],
+      fechaInicio: ['', Validators.required],
+      fechaFin: ['', Validators.required],
+      tipoTramiteRemplazo: ['',Validators.required],
+      nombreRemplazo: ['', Validators.required],
+      cedulaRemplazo: ['', Validators.required],
+      profesionRemplazo: ['',Validators.required],
+      universidadRemplazo: ['', Validators.required]
     })
 
-    this.myForm.get('observation')?.valueChanges
+  this.myForm.get('tipoTramiteDocente')?.valueChanges
   .pipe(distinctUntilChanged())
   .subscribe((valor: string) => {
     setTimeout(() => {
@@ -63,56 +73,159 @@ export class DatasedComponent {
     }, 0);
   });
 
-  }
-
-//   async obtenerTotalDesdeFirebase() {
-//   this.totalIncapacidades = await this.firebase.contarTodasIncapacidades();
-// }
-//   ngOnInit() {
-//     this.obtenerTotalDesdeFirebase();
-//   }
-
-
-ngOnInit() {
-  if (localStorage.getItem('accesoDatased') === 'true') {
-    this.accesoPermitido = true;
-
-    // Guardar clave actual
-    this.firebase.getPassword().then(clave => {
-      localStorage.setItem('claveUsada', clave || '');
-    });
-
-    // Escuchar cambios de clave
-    this.firebase.escucharClave().subscribe(nuevaClave => {
-      const claveGuardada = localStorage.getItem('claveUsada');
-      if (nuevaClave && nuevaClave !== claveGuardada) {
-        localStorage.removeItem('accesoDatased');
-        localStorage.removeItem('claveUsada');
-        this.accesoPermitido = false;
-        Swal.fire({
-          icon: 'info',
-          title: 'Contraseña actualizada',
-          text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
-        });
+  this.myForm.get('tipoTramiteRemplazo')?.valueChanges
+  .pipe(distinctUntilChanged())
+  .subscribe((valor: string) => {
+    setTimeout(() => {
+      if (valor?.toLowerCase() === 'prorroga') {
+        this.deshabilitarCamposProrrogaRemplazo();
+      } else {
+        this.habilitarTodosCamposRemplazo();
       }
-    });
+    }, 0);
+  });
+
   }
-}
+  
 
-
-async verificarClave() {
-  const claveCorrecta = await this.firebase.getPassword();
-
-  if (claveCorrecta && this.claveIngresada === claveCorrecta) {
-    this.accesoPermitido = true;
-    this.errorClave = false;
-    localStorage.setItem('accesoDatased', 'true');
-  } else {
-    this.errorClave = true;
-    alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
-    this.claveIngresada = '';
+  deshabilitarCamposProrroga() {
+    const docente = [ 
+      'municipio',
+      'ied',
+      'nombreDocente',
+      'tipoVinculacion',
+      'areaEducativa',
+      'days',
+      'numeroIncapacidad',
+      'cedulaDocente',
+      'cargo',
+      'tipoIncapacidad',
+      'numsac',
+      'fechaInicio',
+      'fechaFin',
+    ]
+    for (const campo of docente) {
+      if (campo !== 'cedulaDocente' && campo !== 'days' && campo !== 'tipoTramiteDocente' && campo !== 'tipoTramiteRemplazo' && campo !== 'nombreRemplazo' && campo !== 'cedulaRemplazo' && campo !== 'profesionRemplazo' && campo !== 'universidadRemplazo' ) {
+        this.myForm.get(campo)?.disable();
+        this.myForm.get(campo)?.clearValidators();
+        this.myForm.get(campo)?.updateValueAndValidity();
+      }
+    }
   }
-}
+
+  habilitarTodosCampos() {
+    const campos = [
+        'municipio',
+        'ied',
+        'nombreDocente',
+        'tipoVinculacion',
+        'areaEducativa',
+        'days',
+        'numeroIncapacidad',
+        'cedulaDocente',
+        'cargo',
+        'tipoIncapacidad',
+        'tipoTramiteDocente',
+        'numsac',
+        'fechaInicio',
+        'fechaFin',
+    ];
+  
+    for (const campo of campos) {
+      const control = this.myForm.get(campo);
+      if (!control) continue;
+  
+      // Solo habilita si está deshabilitado
+      if (control.disabled) {
+        control.enable({ emitEvent: false }); // evita nuevo valueChanges
+      }
+  
+      // Establece validador solo si no lo tiene ya
+      control.setValidators(Validators.required);
+      control.updateValueAndValidity({ emitEvent: false }); // evita loops
+    }
+  }
+
+  deshabilitarCamposProrrogaRemplazo() {
+    const camposRemplazo = [
+      'nombreRemplazo',
+      'cedulaRemplazo',
+      'profesionRemplazo',
+      'universidadRemplazo'
+    ];
+      for (const campo of camposRemplazo) {
+      if (campo !== 'tipoTramiteRemplazo' && campo !== 'tipoTramiteDocente') {
+        this.myForm.get(campo)?.disable();
+        this.myForm.get(campo)?.clearValidators();
+        this.myForm.get(campo)?.updateValueAndValidity();
+      }
+    }
+  }
+
+  habilitarTodosCamposRemplazo() {
+    const camposRemplazo = [
+      'tipoTramiteRemplazo',
+      'nombreRemplazo',
+      'cedulaRemplazo',
+      'profesionRemplazo',
+      'universidadRemplazo'
+    ];
+
+    for (const campo of camposRemplazo) {
+      const control = this.myForm.get(campo);
+      if (!control) continue;
+  
+      // Solo habilita si está deshabilitado
+      if (control.disabled) {
+        control.enable({ emitEvent: false }); // evita nuevo valueChanges
+      }
+  
+      // Establece validador solo si no lo tiene ya
+      control.setValidators(Validators.required);
+      control.updateValueAndValidity({ emitEvent: false }); // evita loops
+    }
+  }
+
+// ngOnInit() {
+//   if (localStorage.getItem('accesoDatased') === 'true') {
+//     this.accesoPermitido = true;
+
+//     // Guardar clave actual
+//     this.firebase.getPassword().then(clave => {
+//       localStorage.setItem('claveUsada', clave || '');
+//     });
+
+//     // Escuchar cambios de clave
+//     this.firebase.escucharClave().subscribe(nuevaClave => {
+//       const claveGuardada = localStorage.getItem('claveUsada');
+//       if (nuevaClave && nuevaClave !== claveGuardada) {
+//         localStorage.removeItem('accesoDatased');
+//         localStorage.removeItem('claveUsada');
+//         this.accesoPermitido = false;
+//         Swal.fire({
+//           icon: 'info',
+//           title: 'Contraseña actualizada',
+//           text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
+//         });
+//       }
+//     });
+//   }
+// }
+
+
+// async verificarClave() {
+//   const claveCorrecta = await this.firebase.getPassword();
+
+//   if (claveCorrecta && this.claveIngresada === claveCorrecta) {
+//     this.accesoPermitido = true;
+//     this.errorClave = false;
+//     localStorage.setItem('accesoDatased', 'true');
+//   } else {
+//     this.errorClave = true;
+//     alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
+//     this.claveIngresada = '';
+//   }
+// }
 
 limpiarInputsArchivo() {
   if (this.inputArchivo1) {
@@ -125,36 +238,6 @@ limpiarInputsArchivo() {
   this.urlArchivo1 = undefined!;
   this.urlArchivo2 = undefined!;
 }
-
-  deshabilitarCamposProrroga() {
-    const campos = Object.keys(this.myForm.controls);
-    for (const campo of campos) {
-      if (campo !== 'ceddocente' && campo !== 'days' && campo !== 'observation') {
-        this.myForm.get(campo)?.disable();
-        this.myForm.get(campo)?.clearValidators();
-        this.myForm.get(campo)?.updateValueAndValidity();
-      }
-    }
-  }
-  
-  habilitarTodosCampos() {
-  const campos = Object.keys(this.myForm.controls);
-
-  for (const campo of campos) {
-    const control = this.myForm.get(campo);
-    if (!control) continue;
-
-    // Solo habilita si está deshabilitado
-    if (control.disabled) {
-      control.enable({ emitEvent: false }); // evita nuevo valueChanges
-    }
-
-    // Establece validador solo si no lo tiene ya
-    control.setValidators(Validators.required);
-    control.updateValueAndValidity({ emitEvent: false }); // evita loops
-  }
-}
-
 
   onFileChange(event: any, tipo: string) {
     const archivo = event.target.files[0];
@@ -184,8 +267,8 @@ limpiarInputsArchivo() {
     this.loaderService.show();
 
     const formData = this.myForm.getRawValue(); // ✅ CAMBIADO AQUÍ
-    const observation = formData.observation?.toLowerCase();
-    const cedula = String(formData.ceddocente).trim();
+    const observation = formData.tipoTramiteDocente?.toLowerCase();
+    const cedula = String(formData.cedulaDocente).trim();
     const fecha = new Date().toISOString();  // para fecha de subida
     let fechaa = new Date();
       let mes = (fechaa.getMonth() + 1).toString().padStart(2, '0');
@@ -271,13 +354,14 @@ limpiarInputsArchivo() {
         await this.firebase.guardarFormularioPrincipal(formData);
       }
   
-      await this.firebase.guardarIncapacidad(cedula, formData.days);
+      await this.firebase.guardarIncapacidad(cedula, formData.days,   this.myForm.value.nombreRemplazo || null
+);
   
       Swal.fire({ 
         icon: 'success', 
         title: 'Guardado correctamente',
         html: `<b style="font-size:18px; color:#000">IDENTIFICADOR UNICO:</b> <b style="font-size:22px; color:red">000${identificadorUnico}</b> <br>
-        <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b><b style="font-size:22px; color:red">    ${this.myForm.value.ceddocente}</b>`,
+        <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b><b style="font-size:22px; color:red">    ${this.myForm.value.cedulaDocente}</b>`,
         didOpen: async () => {
           await new Promise(resolve => setTimeout(resolve, 300)); 
           const modal = document.querySelector('.swal2-popup') as HTMLElement;

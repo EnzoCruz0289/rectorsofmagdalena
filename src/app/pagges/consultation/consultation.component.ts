@@ -37,7 +37,7 @@ import Swal from 'sweetalert2';
   styleUrl: './consultation.component.css'
 })
 export class ConsultationComponent {
-  displayedColumns: string[] = ['municipio', 'namerec', 'ceddocente', 'ied', 'info', ];
+  displayedColumns: string[] = ['fechaRegistrocomp', 'municipio', 'nombreDocente', 'cedulaDocente' , 'ied', 'numeroIncapacidad', 'numsac', 'info' ];
   filterprest: FilterTsService = inject(FilterTsService);
   firebaseservice = inject(FirebaseService);
   dialog = inject(MatDialog);
@@ -178,35 +178,35 @@ export class ConsultationComponent {
     <div mat-dialog-content>
       <div class="table-responsive">
         <table mat-table [dataSource]="dataSourcep" class="mat-elevation-z8 table container">
-
-          <ng-container matColumnDef="cedrec">
-            <th mat-header-cell *matHeaderCellDef> CEDULA DEL RECTOR </th>
-            <td mat-cell *matCellDef="let element"> {{element.cedrec}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="emailied">
-            <th mat-header-cell *matHeaderCellDef> CORREO INSTITUCION </th>
-            <td mat-cell *matCellDef="let element"> {{element.emailied}} </td>
-          </ng-container>
-
-          <ng-container matColumnDef="numied">
-            <th mat-header-cell *matHeaderCellDef> NUMERO IED </th>
+          
+          <ng-container matColumnDef="tipoTramiteDocente">
+            <th mat-header-cell *matHeaderCellDef> Tipo de tramite </th>
             <td mat-cell *matCellDef="let element">
-              <div class="observacion-text">{{element.numied}}</div>
+              <div class="observacion-text">{{element.tipoTramiteDocente}}</div>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="numrec">
-            <th mat-header-cell *matHeaderCellDef> NUMERO RECTOR </th>
+          <ng-container matColumnDef="cargo">
+            <th mat-header-cell *matHeaderCellDef> Cargo </th>
+            <td mat-cell *matCellDef="let element"> {{element.cargo}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipoVinculacion">
+            <th mat-header-cell *matHeaderCellDef> Tipo de vinculacion </th>
+            <td mat-cell *matCellDef="let element"> {{element.tipoVinculacion}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="tipoIncapacidad">
+            <th mat-header-cell *matHeaderCellDef> Tipo de incapacidad </th>
             <td mat-cell *matCellDef="let element">
-              <div class="observacion-text">{{element.numrec}}</div>
+              <div class="observacion-text">{{element.tipoIncapacidad}}</div>
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="observacion">
+          <ng-container matColumnDef="areaEducativa">
             <th mat-header-cell *matHeaderCellDef> OBSERVACION </th>
             <td mat-cell *matCellDef="let element">
-              <div class="observacion-text">{{element.observation}}</div>
+              <div class="observacion-text">{{element.areaEducativa}}</div>
             </td>
           </ng-container>
 
@@ -231,8 +231,13 @@ export class ConsultationComponent {
           </thead>
           <tbody>
             <tr *ngFor="let inc of listaIncapacidades">
-            <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd hh:mm:ss a' }}</td>
-            <td>{{ inc.dias_incapacidad }}</td>
+              <td>{{ inc.nombre_docente }}</td>
+  <td>{{ inc.tipo_docente }}</td>
+  <td>{{ inc.cedulaRemplazo }}</td>
+  <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd' }}</td>
+  <td>{{ inc.dias_incapacidad }}</td>
+  <td>{{ inc.fechaInicio | date: 'yyyy-MM-dd' }}</td>
+  <td>{{ inc.fechaFin | date: 'yyyy-MM-dd' }}</td>
               <td>
                 <a *ngIf="inc.archivo_1_url" [href]="inc.archivo_1_url" target="_blank">Descargar</a>
                 <span *ngIf="!inc.archivo_1_url">No disponible</span>
@@ -243,11 +248,16 @@ export class ConsultationComponent {
               </td>
             </tr>
           </tbody>
+          <tfoot>
+    <tr>
+      <th colspan="1">Total</th>
+      <th>{{ totalDias }}</th>
+      <th colspan="2"></th>
+    </tr>
+  </tfoot>
         </table>
       </div>
     </div>
-    <!-- FIN NUEVA TABLA -->
-
   </mat-card-content>
 </mat-card>
   `,
@@ -265,11 +275,12 @@ export class ConsultationComponent {
   ]
 })
 export class DialogContentComponent implements OnInit {
-  displayedColumns: string[] = ['cedrec', 'emailied', 'numied', 'numrec', 'observacion',];
+  displayedColumns: string[] = ['cargo', 'tipoVinculacion', 'tipoIncapacidad', 'tipoTramiteDocente', 'areaEducativa',];
   dataSourcep: any[] = [];
   archivoCV: string | null = null;
   archivoIncapacidad: string | null = null;
   listaIncapacidades: any[] = [];
+  totalDias = 0;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -290,26 +301,19 @@ export class DialogContentComponent implements OnInit {
 
   async buscarArchivos(cedula: string) {
     // console.log("📌 Buscando archivos para cédula:", cedula);
+  const { incapacidades, totalDias } = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
+
   
-    // 1️⃣ Firebase
-    const incapacidadesFirebase = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
-    // console.log("✅ Firebase:", incapacidadesFirebase);
-  
-    // 2️⃣ Supabase
     const incapacidadesSupabase = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
-    // console.log("✅ Supabase:", incapacidadesSupabase);
-  
-    // 3️⃣ CV
+   
     const archivoCV = await this.supabase.obtenerArchivosPorCedula(cedula);
-    // console.log("✅ Archivo CV:", archivoCV);
     this.archivoCV = archivoCV?.cv || null;
   
-    // Función para dejar fecha en formato YYYY-MM-DD
     const normalizarFecha = (fecha: string) =>
       new Date(fecha).toISOString().split('T')[0];
   
     // 4️⃣ Unir info por fecha normalizada
-    this.listaIncapacidades = incapacidadesFirebase.map(incFb => {
+    this.listaIncapacidades = incapacidades.map(incFb => {
       const fechaFb = normalizarFecha(incFb.fecha_incapacidad);
       const match = incapacidadesSupabase.find(
         incSb => normalizarFecha(incSb.fecha_incapacidad) === fechaFb
@@ -317,10 +321,11 @@ export class DialogContentComponent implements OnInit {
       return {
         ...incFb,
         archivo_1_url: match?.archivo_1_url || null,
-        archivo_2_url: match?.archivo_2_url || null
+        archivo_2_url: match?.archivo_2_url || null,
       };
     });
-  
+
+    this.totalDias = totalDias;
     // 5️⃣ Ordenar por fecha descendente
     this.listaIncapacidades.sort((a, b) => {
       return new Date(b.fecha_incapacidad).getTime() - new Date(a.fecha_incapacidad).getTime();

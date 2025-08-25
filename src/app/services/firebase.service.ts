@@ -57,7 +57,7 @@ export class FirebaseService {
 
     // Guardar formulario principal (por cédula)
     async guardarFormularioPrincipal(data: any) {
-      const docRef = doc(this._firestore, `information/${data.ceddocente}`);
+      const docRef = doc(this._firestore, `information/${data.cedulaDocente}`);
       const docSnap = await getDoc(docRef);
     
       if (!docSnap.exists()) {
@@ -75,10 +75,11 @@ export class FirebaseService {
   }
 
   // Guardar una incapacidad en subcolección con fecha automática
-  async guardarIncapacidad(cedula: string, days: number) {
+  async guardarIncapacidad(cedula: string, days: number, nombreRemplazo:string) {
     const date = new Date().toISOString().replace('T', ' ');
     const subRef = collection(this._firestore, 'information', cedula, 'incapacidades');
-    await addDoc(subRef, { days, date });
+    await addDoc(subRef, { days, date,     nombreRemplazo: nombreRemplazo ?? null  // 👈 evita undefined
+ });
   }
 
   async contarTodasIncapacidades(): Promise<number> {
@@ -124,7 +125,15 @@ export class FirebaseService {
     return nuevoValor;
   }
 
-  async obtenerIncapacidadesPorCedula(cedula: string | number): Promise<any[]> {
+  async obtenerIncapacidadesPorCedula(cedula: string | number): Promise<{ incapacidades: any[], totalDias: number }> {
+    
+    const docRef = doc(this._firestore, `informacion/${cedula}`);
+    const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) return { incapacidades: [], totalDias: 0 };
+
+  const docenteData = docSnap.data(); // 👈 aquí está nombre, correo, etc.
+  const colRef = collection(this._firestore, `informacion/${cedula}/incapacidades`);
+
     const subRef = collection(
       this._firestore,
       'information',
@@ -134,11 +143,25 @@ export class FirebaseService {
     
     const snap = await getDocs(subRef);
   
-    return snap.docs.map(doc => ({
-      fecha_incapacidad: doc.data()['date'],
-      dias_incapacidad: doc.data()['days']
+    const incapacidades =  snap.docs.map(doc => ({
+      fecha_incapacidad: doc.data()['fechaInicio'],
+      dias_incapacidad: doc.data()['days'],
+       tipo_docente: docenteData['tipoTramiteRemplazo'],   // 👈 lo agregas a cada incapacidad
+       nombre_docente: docenteData['nombreRemplazo'],   // 👈 puedes meter más
+      fechaInicio: docenteData['fechaInicio'],
+      fechaFin: docenteData['fechaFin'],
+      cedulaRemplazo: docenteData['cedulaRemplazo'],
     }));
-  }
+
+    let totalDias = 0;
+    
+    for(let incapacidad of incapacidades){
+        totalDias += incapacidad.dias_incapacidad;
+
+      }
+      
+  return { incapacidades, totalDias };
+    }
 
 
 } 

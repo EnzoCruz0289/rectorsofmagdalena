@@ -10,7 +10,7 @@ export class FilterTsService {
 
   getUserFiltered(filtroname: string): Observable<any[]> {
     const ref = collection(this.firestore, 'information'); 
-    const q = query(ref, where('ceddocente', '==', Number(filtroname)));
+    const q = query(ref, where('cedulaDocente', '==', Number(filtroname)));
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
 

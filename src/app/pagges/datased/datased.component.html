@@ -2,7 +2,7 @@
 
 <body>
 
-  <div *ngIf="!accesoPermitido" class="bloqueo">
+  <!-- <div *ngIf="!accesoPermitido" class="bloqueo">
     <div class="bloqueo-card">
       <h3>🔒 Acceso restringido</h3>
       <input 
@@ -14,9 +14,9 @@
       <button (click)="verificarClave()" class="btn-verificar">Verificar</button>
       <p *ngIf="errorClave" class="error">Clave incorrecta</p>
     </div>
-  </div>
+  </div> -->
   
-  <div *ngIf="accesoPermitido" class="page-wrapper">
+  <!-- <div *ngIf="accesoPermitido" class="page-wrapper"> -->
 
     <div class="page-wrapper">
       <nav class="navbar navbar-expand-lg">
@@ -37,7 +37,23 @@
     
 
       <div *ngIf="step === 1" class="row">
-        <h3>DATOS PROFESOR INCAPACITADO</h3>
+        <div>
+          
+          <h3 class="d-flex justify-content-center align-items-center">
+            DATOS PROFESOR INCAPACITADO
+          </h3>
+        </div>
+
+            
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">TIPO DE TRAMITE</b>
+      <select formControlName="tipoTramiteDocente" placeholder="Seleccione una opción" class="form-control"
+        id="exampleFormControlInput8">
+        <option value="" disabled selected>Seleccione una opción</option>
+        <option value="Primera vez">Primera vez</option>
+        <option value="Prorroga">Prorroga</option>
+      </select>
+    </div>
 
         <div class="col-12 col-sm-6 col-md-4 my-1">
           <b class="form-group-label">MUNICIPIO</b>
@@ -84,17 +100,17 @@
 
         <div class="col-12 col-sm-6 col-md-4 my-1">
           <b class="form-group-label">NOMBRE</b>
-          <input class="form-control" formControlName="namerec" type="text">
+          <input class="form-control" formControlName="nombreDocente" type="text">
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 ">
           <b class="form-group-label">CEDULA </b>
-          <input class="form-control" formControlName="cedrec" type="number">
+          <input class="form-control" formControlName="cedulaDocente" type="number">
         </div>
 
         <div class="col-12 col-sm-6 col-md-4 my-1">
           <b class="form-group-label">AREA EDUCATIVA DOCENTE INCAPACITADO</b>
-          <select formControlName="areaed" placeholder="Seleccione una opción" class="form-control"
+          <select formControlName="areaEducativa" placeholder="Seleccione una opción" class="form-control"
           id="exampleFormControlInput1">
           <option value="" disabled selected>Seleccione una opción</option>
           <option value="Docente de Prescolar">Docente de Prescolar</option>
@@ -122,12 +138,12 @@
 
       <div class="col-12 col-sm-6 col-md-4 my-1">
         <b class="form-group-label">NUMERO DE INCAPACIDAD</b>
-        <input class="form-control" formControlName="emailied" type="email">
+        <input class="form-control" formControlName="numeroIncapacidad" type="text">
       </div>
 
       <div class="col-12 col-sm-6 col-md-4 my-1">
         <b class="form-group-label">TIPO DE VINCULACION</b>
-        <select formControlName="ceddocente" placeholder="Seleccione una opción" class="form-control"
+        <select formControlName="tipoVinculacion" placeholder="Seleccione una opción" class="form-control"
           id="exampleFormControlInput2">
           <option value="" disabled selected>Seleccione una opción</option>
           <option value="Vacancia temporal">Vacancia temporal</option>
@@ -138,8 +154,8 @@
 
       <div class="col-12 col-sm-6 col-md-4 my-1">
         <b class="form-group-label">CARGO</b>
-        <select formControlName="numied" placeholder="Seleccione una opción" class="form-control"
-          id="exampleFormControlInput2">
+        <select formControlName="cargo" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput3">
           <option value="" disabled selected>Seleccione una opción</option>
           <option value="Docente de area">Docente de area</option>
           <option value="Docente orientador">Docente orientador</option>
@@ -151,8 +167,8 @@
 
       <div class="col-12 col-sm-6 col-md-4 my-1">
         <b class="form-group-label">TIPO DE INCAPACIDAD</b>
-        <select formControlName="numrec" placeholder="Seleccione una opción" class="form-control"
-        id="exampleFormControlInput2">
+        <select formControlName="tipoIncapacidad" placeholder="Seleccione una opción" class="form-control"
+        id="exampleFormControlInput4">
         <option value="" disabled selected>Seleccione una opción</option>
         <option value="Licencia de enfermedad">Licencia de enfermedad</option>
         <option value="Licencia de maternidad">Licencia de maternidad</option>
@@ -164,66 +180,88 @@
       <input class="form-control" formControlName="days" type="number">
     </div>
     
-    
     <div class="col-12 col-sm-6 col-md-4 my-1">
       <b class="form-group-label">NUMERO SAC </b>
       <input class="form-control" formControlName="numsac" type="text">
     </div>
 
-        <button (click)="nextStep()">Siguiente</button>
+
+    <div class="col-12 col-sm-6 col-md-4 ">
+      <b class="form-group-label">FECHA DE INCAPACIDAD</b>
+      <mat-form-field appearance="outline" >
+          <mat-label>Fecha</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate placeholder="Filtro inicio" formControlName="fechaInicio">
+              <input matEndDate placeholder="Filtro fin" formControlName="fechaFin">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+  </div>
+
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
+      <input type="file"  #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
+    </div>
+      <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 ">
+        <button (click)="nextStep()" class="d-flex justify-content-first " style="max-width: 90px; color: white;">Siguiente</button>
+
       </div>
-      
-      <div *ngIf="step === 2" class="row">
-        <h3>DATOS PROFESOR REMPLAZO</h3>
-        <input placeholder="Correo" type="email">
-        <button (click)="prevStep()">Atrás</button>
-        <button (click)="nextStep()">Siguiente</button>
-      </div>
-      
-      <div *ngIf="step === 3" class="row">
-        <h3>DATOS PROFESOR REMPLAZO</h3>
-        <input placeholder="Teléfono" type="text">
-        <button (click)="prevStep()">Atrás</button>
-        <button (click)="enviar()">Enviar</button>
       </div>
 
-    
-              
-              
-              
-    
+
+
+
+
+      <div *ngIf="step === 2" class="row">
+        <h3 class="d-flex justify-content-center align-items-center">
+          DATOS PROFESOR REMPLAZO
+        </h3>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">TIPO DE TRAMITE</b>
+          <select formControlName="tipoTramiteRemplazo" placeholder="Seleccione una opción" class="form-control"
+            id="exampleFormControlInput5">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Primera vez">Primera vez</option>
+            <option value="Prorroga">Prorroga</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">NOMBRE</b>
+          <input class="form-control" formControlName="nombreRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">CEDULA </b>
+          <input class="form-control" formControlName="cedulaRemplazo" type="number">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">PROFESION </b>
+          <input class="form-control" formControlName="profesionRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">UNIVERSIDAD </b>
+          <input class="form-control" formControlName="universidadRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
+          <input type="file"  #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
+        </div>
+
+        <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
+
+          <button (click)="prevStep()" style="color: white;">Atrás</button>
+          <button type="button" style="color: white;" class="ajus ms-2" (click)="enviar()">
+            Enviar
+          </button>
+        </div>
+      </div>
              
-    
-            
-    
-    
-              <div class="col-12 col-sm-6 col-md-4 my-1">
-                <b class="form-group-label">TIPO DE TRAMITE</b>
-                <select formControlName="observation" placeholder="Seleccione una opción" class="form-control"
-                  id="exampleFormControlInput2">
-                  <option value="" disabled selected>Seleccione una opción</option>
-                  <option value="Primera vez">Primera vez</option>
-                  <option value="Prorroga">Prorroga</option>
-                </select>
-              </div>
-    
-              <div class="col-12 col-sm-6 col-md-6 my-1">
-                <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
-                <input type="file"  #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
-              </div>
-    
-              <div class="col-12 col-sm-6 col-md-6 my-1">
-                <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
-                <input type="file"  #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
-              </div>
-    
-              <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
-    
-    
-                <button type="button" style="color: white;" class="ajus" (click)="enviar()">
-                  ENVIAR
-                </button>
-              </div>
             </form>
           </div>
         </div>
@@ -243,4 +281,4 @@
       </div>
       <!-- Bootstrap JS -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    </div>
+    <!-- </div> -->
