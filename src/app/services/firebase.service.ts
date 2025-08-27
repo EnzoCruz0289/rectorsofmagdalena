@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { runTransaction, Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc, onSnapshot} from '@angular/fire/firestore';
+import { runTransaction, Firestore, addDoc, arrayRemove, collection, doc, docData, getDoc, getDocs, getFirestore, setDoc, updateDoc, onSnapshot, orderBy, limit, query} from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -59,7 +59,7 @@ export class FirebaseService {
     async guardarFormularioPrincipal(data: any) {
       const docRef = doc(this._firestore, `information/${data.cedulaDocente}`);
       const docSnap = await getDoc(docRef);
-      const { days, nombreRemplazo, fechaInicio, fechaFin, cedulaRemplazo, ...dataGeneral } = data;
+      const { days, nombreRemplazo, fechaInicio, fechaFin, cedulaRemplazo, tipoTramiteRemplazo, ...dataGeneral } = data;
 
       if (!docSnap.exists()) {
         await setDoc(docRef, dataGeneral); 
@@ -76,17 +76,23 @@ export class FirebaseService {
   }
 
   // Guardar una incapacidad en subcolección con fecha automática
-  async guardarIncapacidad(cedula: string, days: number, nombreRemplazo:string, fechaInicio:string, fechaFin:string, cedulaRemplazo:number) {
+  async guardarIncapacidad(cedula: string, days: number, nombreRemplazo:string, fechaInicio:string, fechaFin:string, cedulaRemplazo:number, tipoTramiteRemplazo:string, incapacidadId: number,): Promise<number> {
+
     const date = new Date().toISOString().replace('T', ' ');
+
     const subRef = collection(this._firestore, 'information', cedula, 'incapacidades');
+
     await addDoc(subRef, { 
+      incapacidadId,
       days, 
       date, 
       nombreRemplazo: nombreRemplazo ?? null,
-      fechaInicio: fechaInicio ?? null,  
-      fechaFin: fechaFin ?? null,  
-      cedulaRemplazo: cedulaRemplazo ?? null
+    fechaInicio: fechaInicio ? new Date(fechaInicio).toISOString() : null,  
+    fechaFin: fechaFin ? new Date(fechaFin).toISOString() : null,  
+      cedulaRemplazo: cedulaRemplazo ?? null,
+      tipoTramiteRemplazo: tipoTramiteRemplazo ?? null
  });
+ return incapacidadId
   }
 
   async contarTodasIncapacidades(): Promise<number> {
@@ -132,14 +138,15 @@ export class FirebaseService {
     return nuevoValor;
   }
 
+  
+
   async obtenerIncapacidadesPorCedula(cedula: string | number): Promise<{ incapacidades: any[], totalDias: number }> {
     
-    const docRef = doc(this._firestore, `informacion/${cedula}`);
+    const docRef = doc(this._firestore, `information/${cedula}`);
+    const docCont = doc(this._firestore, `counters/${cedula}`);
     const docSnap = await getDoc(docRef);
+    
   if (!docSnap.exists()) return { incapacidades: [], totalDias: 0 };
-
-  const docenteData = docSnap.data(); // 👈 aquí está nombre, correo, etc.
-  const colRef = collection(this._firestore, `informacion/${cedula}/incapacidades`);
 
     const subRef = collection(
       this._firestore,
@@ -151,13 +158,14 @@ export class FirebaseService {
     const snap = await getDocs(subRef);
   
     const incapacidades =  snap.docs.map(doc => ({
-      fecha_incapacidad: doc.data()['fechaInicio'],
+      incapacidadId: doc.data()['incapacidadId'],
+      fecha_incapacidad: doc.data()['date'],
       dias_incapacidad: doc.data()['days'],
-       tipo_docente: docenteData['tipoTramiteRemplazo'],   // 👈 lo agregas a cada incapacidad
-       nombre_docente: docenteData['nombreRemplazo'],   // 👈 puedes meter más
-      fechaInicio: docenteData['fechaInicio'],
-      fechaFin: docenteData['fechaFin'],
-      cedulaRemplazo: docenteData['cedulaRemplazo'],
+       tipo_docente: doc.data()['tipoTramiteRemplazo'],   // 👈 lo agregas a cada incapacidad
+       nombre_docente: doc.data()['nombreRemplazo'],   // 👈 puedes meter más
+      fechaInicio: doc.data()['fechaInicio'],
+      fechaFin: doc.data()['fechaFin'],
+      cedulaRemplazo: doc.data()['cedulaRemplazo'],
     }));
 
     let totalDias = 0;
@@ -169,6 +177,17 @@ export class FirebaseService {
       
   return { incapacidades, totalDias };
     }
+
+    async obtenerUltimaIncapacidadPorCedula(cedula: string) {
+  const subRef = collection(this._firestore, 'information', cedula, 'incapacidades');
+  const q = query(subRef, orderBy("fechaInicio", "desc"), limit(1));
+  const snap = await getDocs(q);
+
+  if (!snap.empty) {
+    return snap.docs[0].data();
+  }
+  return null;
+}
 
 
 } 

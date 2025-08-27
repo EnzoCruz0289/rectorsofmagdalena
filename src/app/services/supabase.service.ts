@@ -57,24 +57,26 @@ export class SupabaseService {
     return publicUrl;
   }
 
-  async guardarRector(cedula: string, hojaVidaUrl: string, incapacidadUrl: string) {
-    const { error } = await this.supabase
-      .from('IncapacidadesRectores')
-      .insert({
-        cedula : String(cedula).trim(),
-        archivo_cv_url: hojaVidaUrl,
-        archivo_incapacidad_url: incapacidadUrl
-      });
-  
-    if (error) {
-      console.error('Error al guardar en la tabla:', error.message);
-    }
+  async guardarRector(cedula: string, incapacidadId: string, hojaVidaUrl: string, incapacidadUrl: string) {
+  const { error } = await this.supabase
+    .from('IncapacidadesRectores')
+    .insert({
+      cedula : String(cedula).trim(),
+      incapacidad_id: incapacidadId,   // 👈 importante usar snake_case si así lo tienes en la tabla
+      archivo_cv_url: hojaVidaUrl,
+      archivo_incapacidad_url: incapacidadUrl,
+      fecha_incapacidad: new Date().toISOString()
+    });
+
+  if (error) {
+    console.error('Error al guardar en la tabla:', error.message);
   }
+}
 
   async obtenerArchivosPorCedula(cedula: string): Promise<{ cv: string | null, incapacidad: string | null }> {
     const { data, error } = await this.supabase
       .from('IncapacidadesRectores')
-      .select('archivo_1_url, archivo_2_url')
+    .select('archivo_cv_url, archivo_incapacidad_url')
       .eq('cedula', cedula)
       .order('id', { ascending: false })  // 👈 ordena por el último insertado
       .limit(1)
@@ -86,8 +88,8 @@ export class SupabaseService {
     }
   
     return {
-      cv: data.archivo_1_url,
-      incapacidad: data.archivo_2_url
+      cv: data.archivo_cv_url,
+      incapacidad: data.archivo_incapacidad_url
     };
   }
 

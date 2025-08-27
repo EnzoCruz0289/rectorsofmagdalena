@@ -222,23 +222,27 @@ export class ConsultationComponent {
         <table class="table table-striped table-bordered">
           <thead>
             <tr>
+              <th>ID</th>
+              <th>Fecha Registro</th>
               <th>Fecha Inicio</th>
               <th>Fecha Fin</th>
-              <th>Dias</th>
-              <th>Cedula</th>
-              <th>Nombre</th>
-              <th>Hoja de vida</th>
+              <th>Nombre Docente</th>
+              <th>Cédula Reemplazo</th>
+              <th>Tipo de Tramite</th>
+              <th>Archivo incapacidad</th>
+              <th>Archivo CV</th>
+              <th>Días</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let inc of listaIncapacidades">
+              <td>{{ inc.incapacidadId }}</td>
+              <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ inc.fechaInicio | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ inc.fechaFin | date: 'yyyy-MM-dd' }}</td>
               <td>{{ inc.nombre_docente }}</td>
-  <td>{{ inc.tipo_docente }}</td>
-  <td>{{ inc.cedulaRemplazo }}</td>
-  <td>{{ inc.fecha_incapacidad | date: 'yyyy-MM-dd' }}</td>
-  <td>{{ inc.dias_incapacidad }}</td>
-  <td>{{ inc.fechaInicio | date: 'yyyy-MM-dd' }}</td>
-  <td>{{ inc.fechaFin | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ inc.cedulaRemplazo }}</td>
+              <td>{{ inc.tipo_docente }}</td>
               <td>
                 <a *ngIf="inc.archivo_1_url" [href]="inc.archivo_1_url" target="_blank">Descargar</a>
                 <span *ngIf="!inc.archivo_1_url">No disponible</span>
@@ -247,13 +251,13 @@ export class ConsultationComponent {
                 <a *ngIf="inc.archivo_2_url" [href]="inc.archivo_2_url" target="_blank">Descargar</a>
                 <span *ngIf="!inc.archivo_2_url">No disponible</span>
               </td>
+              <td>{{ inc.dias_incapacidad }}</td>
             </tr>
           </tbody>
           <tfoot>
     <tr>
-      <th colspan="1">Total</th>
+      <th colspan="9">Total</th>
       <th>{{ totalDias }}</th>
-      <th colspan="2"></th>
     </tr>
   </tfoot>
         </table>
@@ -282,7 +286,7 @@ export class DialogContentComponent implements OnInit {
   archivoIncapacidad: string | null = null;
   listaIncapacidades: any[] = [];
   totalDias = 0;
-
+  
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private supabase: SupabaseService,
@@ -290,20 +294,11 @@ export class DialogContentComponent implements OnInit {
   ) {
     this.dataSourcep = data.prestamos;
   }
-
-  ngOnInit(): void {
-    const cedula = this.data?.prestamos?.[0]?.ceddocente;  // <- toma la cédula desde Firebase
-    // console.log('Buscando archivos para cédula:', cedula);
-
-    if (cedula) {
-      this.buscarArchivos(cedula);
-    }
-  }
-
+  
   async buscarArchivos(cedula: string) {
     // console.log("📌 Buscando archivos para cédula:", cedula);
     const { incapacidades, totalDias } = await this.firebaseService.obtenerIncapacidadesPorCedula(cedula);
-
+    
   
     const incapacidadesSupabase = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
    
@@ -314,11 +309,11 @@ export class DialogContentComponent implements OnInit {
       new Date(fecha).toISOString().split('T')[0];
   
     // 4️⃣ Unir info por fecha normalizada
-    this.listaIncapacidades = incapacidades.map(incFb => {
-      const fechaFb = normalizarFecha(incFb.fecha_incapacidad);
+     this.listaIncapacidades = incapacidades.map(incFb => {
       const match = incapacidadesSupabase.find(
-        incSb => normalizarFecha(incSb.fecha_incapacidad) === fechaFb
+        incSb => incSb.incapacidadId === incFb.incapacidadId // 👈 unión exacta
       );
+
       return {
         ...incFb,
         archivo_1_url: match?.archivo_1_url || null,
@@ -326,12 +321,20 @@ export class DialogContentComponent implements OnInit {
       };
     });
 
+    
     this.totalDias = totalDias;
     // 5️⃣ Ordenar por fecha descendente
     this.listaIncapacidades.sort((a, b) => {
       return new Date(b.fecha_incapacidad).getTime() - new Date(a.fecha_incapacidad).getTime();
     });
   }
-
+  ngOnInit(): void {
+    const cedula = this.data?.prestamos?.[0]?.cedulaDocente;  // <- toma la cédula desde Firebase
+    // console.log('Buscando archivos para cédula:', cedula);
+    
+    if (cedula) {
+      this.buscarArchivos(cedula);
+    }
+  }
   
 }

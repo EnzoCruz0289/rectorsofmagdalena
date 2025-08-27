@@ -101,11 +101,9 @@ export class DatasedComponent {
       'cargo',
       'tipoIncapacidad',
       'numsac',
-      'fechaInicio',
-      'fechaFin',
     ]
     for (const campo of docente) {
-      if (campo !== 'cedulaDocente' && campo !== 'days' && campo !== 'tipoTramiteDocente' && campo !== 'tipoTramiteRemplazo' && campo !== 'nombreRemplazo' && campo !== 'cedulaRemplazo' && campo !== 'profesionRemplazo' && campo !== 'universidadRemplazo' ) {
+      if (campo !== 'cedulaDocente' && campo !== 'days' && campo !== 'fechaInicio' && campo !== 'fechaFin' && campo !== 'tipoTramiteDocente' && campo !== 'tipoTramiteRemplazo' && campo !== 'nombreRemplazo' && campo !== 'cedulaRemplazo' && campo !== 'profesionRemplazo' && campo !== 'universidadRemplazo' ) {
         this.myForm.get(campo)?.disable();
         this.myForm.get(campo)?.clearValidators();
         this.myForm.get(campo)?.updateValueAndValidity();
@@ -334,7 +332,8 @@ limpiarInputsArchivo() {
       const { error } = await this.supabase.supabase
         .from('IncapacidadesRectores')
         .insert({
-          cedula: cedula,
+          cedula: cedula,    
+          incapacidadId: identificadorUnico, 
           archivo_1_url: urlArchivo1,
           archivo_2_url: urlArchivo2,
           fecha_incapacidad: formData.fecha_incapacidad || fecha,
@@ -354,7 +353,30 @@ limpiarInputsArchivo() {
         await this.firebase.guardarFormularioPrincipal(formData);
       }
   
-      await this.firebase.guardarIncapacidad(cedula, formData.days, this.myForm.value.nombreRemplazo || null, this.myForm.value.fechaInicio || null, this.myForm.value.fechaFin || null, this.myForm.value.cedulaRemplazo || null);
+      let nombreRemplazo = this.myForm.value.nombreRemplazo || null;
+      let cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
+      let tipoTramiteRemplazo = this.myForm.value.tipoTramiteRemplazo || null;
+
+      if (observation === 'prorroga') {
+  const ultimo = await this.firebase.obtenerUltimaIncapacidadPorCedula(cedula); 
+  if (ultimo) {
+    nombreRemplazo = ultimo['nombreRemplazo'] ?? nombreRemplazo;
+    cedulaRemplazo = ultimo['cedulaRemplazo'] ?? cedulaRemplazo;
+    tipoTramiteRemplazo = ultimo['tipoTramiteRemplazo'] ?? 'prorroga';
+  }
+}
+
+
+      await this.firebase.guardarIncapacidad(
+  cedula,
+  formData.days, 
+  nombreRemplazo,       // ← de último registro
+  this.myForm.value.fechaInicio || null, 
+  this.myForm.value.fechaFin || null, 
+  cedulaRemplazo,       // ← de último registro
+  tipoTramiteRemplazo,  // ← de último registro
+  identificadorUnico
+);
           
   
       Swal.fire({ 
