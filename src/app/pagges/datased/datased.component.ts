@@ -184,46 +184,51 @@ export class DatasedComponent {
     }
   }
 
- ngOnInit() {
-   if (localStorage.getItem('accesoDatased') === 'true') {
-     this.accesoPermitido = true;
+  ngOnInit() {
+    const accesoPrevio = localStorage.getItem('accesoDatased') === 'true';
+    const claveGuardada = localStorage.getItem('claveUsada');
+  
+    this.firebase.getPassword().then(claveActual => {
+      if (accesoPrevio && claveGuardada === claveActual) {
+        this.accesoPermitido = true;
+      } else {
+        // 🔒 Si cambió la clave o nunca ha entrado
+        this.accesoPermitido = false;
+        localStorage.removeItem('accesoDatased');
+        localStorage.removeItem('claveUsada');
+      }
+    });
+  
+    // Escuchar cambios en tiempo real
+    this.firebase.escucharClave().subscribe(nuevaClave => {
+      const claveGuardada = localStorage.getItem('claveUsada');
+      if (nuevaClave && nuevaClave !== claveGuardada) {
+        localStorage.removeItem('accesoDatased');
+        localStorage.removeItem('claveUsada');
+        this.accesoPermitido = false;
+        Swal.fire({
+          icon: 'info',
+          title: 'Contraseña actualizada',
+          text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
+        });
+      }
+    });
+  }
 
-     // Guardar clave actual
-     this.firebase.getPassword().then(clave => {
-       localStorage.setItem('claveUsada', clave || '');
-     });
-
-     // Escuchar cambios de clave
-     this.firebase.escucharClave().subscribe(nuevaClave => {
-       const claveGuardada = localStorage.getItem('claveUsada');
-       if (nuevaClave && nuevaClave !== claveGuardada) {
-         localStorage.removeItem('accesoDatased');
-         localStorage.removeItem('claveUsada');
-         this.accesoPermitido = false;
-         Swal.fire({
-           icon: 'info',
-           title: 'Contraseña actualizada',
-           text: 'La clave de acceso ha cambiado. Por favor vuelve a ingresar.'
-         });
-       }
-     });
-   }
- }
-
-
- async verificarClave() {
-   const claveCorrecta = await this.firebase.getPassword();
-
-   if (claveCorrecta && this.claveIngresada === claveCorrecta) {
-     this.accesoPermitido = true;
-     this.errorClave = false;
-     localStorage.setItem('accesoDatased', 'true');
-   } else {
-     this.errorClave = true;
-     alert("❌ Clave incorrecta. Inténtalo nuevamente."); // alerta
-     this.claveIngresada = '';
-   }
- }
+  async verificarClave() {
+    const claveCorrecta = await this.firebase.getPassword();
+  
+    if (claveCorrecta && this.claveIngresada === claveCorrecta) {
+      this.accesoPermitido = true;
+      this.errorClave = false;
+      localStorage.setItem('accesoDatased', 'true');
+      localStorage.setItem('claveUsada', claveCorrecta); // 👈 guardamos la actual
+    } else {
+      this.errorClave = true;
+      alert("❌ Clave incorrecta. Inténtalo nuevamente.");
+      this.claveIngresada = '';
+    }
+  }
 
 limpiarInputsArchivo() {
   if (this.inputArchivo1) {
