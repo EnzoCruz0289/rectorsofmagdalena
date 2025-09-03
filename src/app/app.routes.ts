@@ -8,9 +8,9 @@ import { ConsultationComponent } from './pagges/consultation/consultation.compon
 export const routes: Routes = [
 
 
-  {path:'login', component:LoginComponent},
+  {path:'loginSED', component:LoginComponent},
 
-  {path:'data', component:DatasedComponent},
+  {path:'rectores', component:DatasedComponent},
 
   {path:'sedmag', component:AppComponent, canActivate:[authGuard],
 
@@ -25,5 +25,5 @@ export const routes: Routes = [
   ]
  },
 
- {path:'**', redirectTo: '/data'},
+ {path:'**', redirectTo: '/rectores'},
 ];

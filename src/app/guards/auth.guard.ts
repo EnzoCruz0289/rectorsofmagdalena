@@ -27,7 +27,7 @@ export const publicGuard: CanActivateFn = () => {
     return authStateObs$().pipe(
         map((user) => {
             if(user) {
-                router.navigateByUrl('login');
+                router.navigateByUrl('loginSED');
                 return false;
             }
             return true;
