@@ -362,7 +362,15 @@ limpiarInputsArchivo() {
   if (ultimo) {
     nombreRemplazo = ultimo['nombreRemplazo'] ?? nombreRemplazo;
     cedulaRemplazo = ultimo['cedulaRemplazo'] ?? cedulaRemplazo;
-    tipoTramiteRemplazo = ultimo['tipoTramiteRemplazo'] ?? 'prorroga';
+    formData.tipoTramiteRemplazo = 'Prorroga';
+
+
+  }else if (observation === 'primera vez') {
+    // 🔹 Asegurar que se guarde lo NUEVO
+    nombreRemplazo = this.myForm.value.nombreRemplazo || null;
+    cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
+    formData.tipoTramiteRemplazo = 'Primera vez';
+
   }
 }
 
