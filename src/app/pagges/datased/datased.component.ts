@@ -266,6 +266,7 @@ limpiarInputsArchivo() {
 
     const formData = this.myForm.getRawValue(); // ✅ CAMBIADO AQUÍ
     const observation = formData.tipoTramiteDocente?.toLowerCase();
+    const observationRemplazo = formData.tipoTramiteRemplazo?.toLowerCase();
     const cedula = String(formData.cedulaDocente).trim();
     const fecha = new Date().toISOString();  // para fecha de subida
     let fechaa = new Date();
@@ -357,7 +358,7 @@ limpiarInputsArchivo() {
       let cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
       let tipoTramiteRemplazo = this.myForm.value.tipoTramiteRemplazo || null;
 
-      if (observation === 'prorroga') {
+   if (observationRemplazo === 'prorroga') {
   const ultimo = await this.firebase.obtenerUltimaIncapacidadPorCedula(cedula); 
   if (ultimo) {
     nombreRemplazo = ultimo['nombreRemplazo'] ?? nombreRemplazo;
@@ -371,7 +372,13 @@ limpiarInputsArchivo() {
     cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
     formData.tipoTramiteRemplazo = 'Primera vez';
 
+
   }
+} else {
+  // 🔹 Caso "Primera vez"
+  nombreRemplazo = this.myForm.value.nombreRemplazo || null;
+  cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
+  tipoTramiteRemplazo = 'primera vez'; // 👈 acá también
 }
 
 
