@@ -1,0 +1,27 @@
+<div class="ads">
+  <img src="assets/logosed.png" >
+  <div class="container" style="background-color: #ffffff62;">
+      <div class="top"></div>
+      <div class="bottom"></div>
+      <div class="center">
+        <form [formGroup]="formLog" action="/action_page.php" method="post">
+          <div class="imgcontainer cent">
+            <img src="https://cdn-icons-png.flaticon.com/512/1903/1903162.png" alt="Avatar" class="avatar">
+          </div>
+          <h2>S.E.D</h2>
+          <div class="input-container">
+            <label for="uname"><b>Usuario</b></label>
+            <input type="text" formControlName="email" placeholder="Ingresa el correo electronico" name="uname" required>
+          </div>
+          <div class="input-container">
+            <label for="psw"><b>Contraseña</b></label>
+            <input type="password" formControlName="password" placeholder="Ingresa la contraseña" name="psw" required>
+          </div>
+          <div class="button-container">
+            <button type="submit" style="background-color: #f44336;" (click)="onSubmit()">Ingresar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

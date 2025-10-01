@@ -1,0 +1,434 @@
+<title>Gobernación del Magdalena</title>
+
+<body>
+
+  <div *ngIf="!accesoPermitido" class="bloqueo">
+    <div class="bloqueo-card">
+      <h3>🔒 Acceso restringido</h3>
+      <input 
+        type="password" 
+        [(ngModel)]="claveIngresada" 
+        placeholder="Clave alfanumérica"
+        class="input-clave"
+      >
+      <button (click)="verificarClave()" class="btn-verificar">Verificar</button>
+      <p *ngIf="errorClave" class="error">Clave incorrecta</p>
+    </div>
+  </div>
+  
+ <div *ngIf="accesoPermitido" class="page-wrapper">
+
+    <div class="page-wrapper">
+      <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+          <div class="d-flex justify-content-start align-items-center">
+            <img src="https://sedmagdalena.gov.co/wp-content/uploads/gov_co.png" alt="logo" class="logov" style="max-height: 15px;"/>
+          </div>
+          <strong class="navbar-brand  ">Modulo Rectores</strong>
+        </div>
+      </nav>
+    
+
+      <div class="main-content container-fluid d-flex flex-column justify-content-center align-items-center flex-grow-1" style="padding: 20px;">
+        <img src="assets/logosed.png" alt="Logo Secretaría de Educación Departamental del Magdalena" class="logo-img mb-5">
+      <div class="inputs-container">
+        <div class="card">
+            <form [formGroup]="myForm" >
+    
+
+      <div *ngIf="step === 1" class="row">
+        <div>
+          
+          <h3 class="d-flex justify-content-center align-items-center">
+            DATOS PROFESOR INCAPACITADO
+          </h3>
+        </div>
+
+            
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">TIPO DE TRÁMITE</b>
+      <select formControlName="tipoTramiteDocente" placeholder="Seleccione una opción" class="form-control"
+        id="exampleFormControlInput8">
+        <option value="" disabled selected>Seleccione una opción</option>
+        <option value="Primera vez">Primera vez</option>
+        <option value="Prorroga">Prorroga</option>
+      </select>
+    </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">MUNICIPIO</b>
+          <select formControlName="municipio" placeholder="Seleccione una opción" class="form-control"
+            id="exampleFormControlInput15">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Algarrobo">Algarrobo</option>
+            <option value="Aracataca">Aracataca</option>
+            <option value="Ariguaní">Ariguaní</option>
+            <option value="Cerro de San Antonio">Cerro de San Antonio</option>
+            <option value="Chivolo">Chivolo</option>
+            <option value="Ciénaga">Ciénaga</option>
+            <option value="Concordia">Concordia</option>
+            <option value="El Banco">El Banco</option>
+            <option value="El Piñón">El Piñón</option>
+            <option value="El Retén">El Retén</option>
+            <option value="Fundación">Fundación</option>
+            <option value="Guamal">Guamal</option>
+            <option value="Nueva Granada">Nueva Granada</option>
+            <option value="Pedraza">Pedraza</option>
+            <option value="Pijiño del Carmen">Pijiño del Carmen</option>
+            <option value="Pivijay">Pivijay</option>
+            <option value="Plato">Plato</option>
+            <option value="Pueblo Viejo">Pueblo Viejo</option>
+            <option value="Remolino">Remolino</option>
+            <option value="Sabanas de San Ángel">Sabanas de San Ángel</option>
+            <option value="Salamina">Salamina</option>
+            <option value="San Sebastián de Buenavista">San Sebastián de Buenavista</option>
+            <option value="San Zenón">San Zenón</option>
+            <option value="Santa Ana">Santa Ana</option>
+            <option value="Santa Bárbara de Pinto">Santa Bárbara de Pinto</option>
+            <option value="Santa Marta">Santa Marta</option>
+            <option value="Sitionuevo">Sitionuevo</option>
+            <option value="Tenerife">Tenerife</option>
+            <option value="Zapayán">Zapayán</option>
+            <option value="Zona Bananera">Zona Bananera</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">INSTITUCIÓN EDUCATIVA</b>
+          <select class="form-control" formControlName="ied" type="text">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ELVIA VIZCAINO DE TODARO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL GABRIEL GARCIA MARQUEZ DE ARACATACA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JOHN F. KENNEDY</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL FOSSY MARCOS MARIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LICEO ARIGUANI</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE BASICA Y MEDIA SAN ANTONIO</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL LICEO SANTANDER</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL SAN JUDAS TADEO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LORENCITA VILLEGAS DE SANTOS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JOSE BENITO BARROS PALOMINO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SANTA TERESA DE JESUS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ARCESIO CALIZ AMADOR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGRICOLA DEL PIÑON</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL EUCLIDES LIZARAZO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TERCERA MIXTA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL FRANCISCO DE PAULA SANTANDER</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL 23 DE FEBRERO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL FUNDACION</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL NUESTRA SEÑORA DEL CARMEN</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL BIENVENIDO RODRIGUEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL NESTOR RANGEL ALFARO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL PIJIÑO DEL CARMEN</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAGRADO CORAZON DE JESUS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LICEO PIVIJAY</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGROPECUARIA JOSE MARIA HERRERA</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL MARIA ALFARO DE OSPINO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL VICTOR CAMARGO ALVAREZ</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL JUANA ARIAS DE BENAVIDES</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICO DEPARTAMENTAL GABRIEL ESCOBAR BALLESTAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAN JOSE DE PUEBLO VIEJO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JUAN MANUEL RUDAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE SALAMINA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL EXTERNADO MIXTO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ALFONSO LOPEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ANTONIO BRUJES CARMONA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL MARIA AUXILIADORA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SANTA MARIA</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL RAFAEL JIMENEZ ALTAHONA</option>
+            <option>INSTITUCIÓN EDUCATIVA TÉCNICA DEPARTAMENTAL SAN JOSE</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICO DEPARTAMENTAL SIMON BOLIVAR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE BUENOS AIRES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAN JUAN  BAUTISTA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ETNOEDUCATIVO Y PLURICULTURAL GUMMAKU</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LA CANDELARIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TECNICA AGROPECUARIA CARMEN DE ARIGUANI</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TECNICA AGROPECUARIA BENJAMIN HERRERA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL MANUEL SALVADOR MEZA CAMARGO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LUZ MARINA CABALLERO</option>
+            <option>CENTRO EDUCATIVO DEPARTAMENTAL SAN ANTONIO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE BASICA Y MEDIA DE CONCORDIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JOSEFA MARIA ROMERO DE LA CRUZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SANTA ROSA DE LIMA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TECNICA FRANCISCO JOSE DE CALDAS</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL DE SOPLADOR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LAS MERCEDES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CERRO BLANCO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CIUDAD PERDIDA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ARMANDO ESTRADA FLOREZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RODRIGO VIVES DE ANDREIS</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL HUMBERTO VELAZQUEZ GARCIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL THELMA ROSA AREVALO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ETNOEDUCATIVA SANTA ROSALIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAN JOSE DE KENNEDY</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL RURAL GUILLERMO ALVAREZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL RITA CUELLO DE VANEGAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ELECTO CALIZ MARTINEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SILVIA COTES DE BISWELL</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL OSCAR PISCIOTTI NUMA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL ENRIQUE QUINTERO JAIMES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL PABLO NIEBLES DE GUAYABAL</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ANAXIMENES TORRES OSPINO</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL MITSILOU CAMPBELL</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL GILBERTO ACUÑA RANGEL</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JOSE DE LA PAZ VANEGAS ORTIZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ROBERTO ROBLES DE ALGARROBAL</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE CARRETO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL CANTAGALLAR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SABANAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ROQUE DE LOS RIOS VALLE</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SIERRA NEVADA DE SANTA MARTA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ALGARROBO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LOMA DEL BALSAMO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RAFAEL NUÑEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGOPECUARIA JUAN FRANCISCO OSPINA</option>
+            <option>INSTITUCIÓN EDUCATIVA INDIGENA Y PLURICULTURAL KANKAWARWA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SAGRADO CORAZON DE JESUS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL LA RINCONADA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL MARIA AUXILIADORA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SAN PEDRO APOSTOL LAS FLORES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE RICAURTE</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL NICOLAS MEJIA MENDEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL PESTALOZZI</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CAÑO DE AGUAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE BOMBA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LICEO ZAPAYAN</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL PEDRO DE HEREDIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAN PABLO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE BASICA Y MEDIA SANTA CRUZ DE BALSAMO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TECNICA AGROECOLOGICA JOSE DADUL</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL AGROAMBIENTAL SAN JOSE</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL EL BRILLANTE</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL FLORES DE MARIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE MEDIA LUNA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGROPECUARIA NUESTRA SEÑORA DE LAS MERCEDES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ALBERTO CABALLERO DE MONTE RUBIO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGROPECUARIA OTILIA MENA ALVAREZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SAN MARTIN DE LOBA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL LUIS CARLOS GALAN SARMIENTO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL AGROPECUARIA URBANO MOLINA CASTRO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TECNICA NUEVA GRANADA</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL AGROPECUARIA ROSA CORTINA HERNANDEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE PALMIRA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL TASAJERA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE NIÑAS ISLA DEL ROSARIO</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL RURAL SAN JUAN DE PALOS PRIETOS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL  BALDOMERO SANIN CANO</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL ETTE ENNAKA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ANDRES DIAZ VENERO DE LEIVA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL LUIS MILLAN VARGAS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE LA PACHA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL SAN VALENTIN</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DE TRONCOSO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE JANEIRO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL JOSE DE LA LUZ MARTINEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL GERARDO VALENCIA CANO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL EL HORNO</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICO DEPARTAMENTAL DE CABRERA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CELINDA MEJIA LOPEZ</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL NUESTRA SEÑORA DEL ROSARIO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SAN JOSE DE SAN FERNANDO</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL DE GERMANIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CIENAGUETA</option>
+            <option>INSTITUCIÓN EDUCATIVA TECNICA DEPARTAMENTAL DE PINTO GILMA ROYERO SOLANO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL RURAL DE PALERMO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL ANUAR RIVERA JATTAR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SANTA INES</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL REAL DEL OBISPO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL DAGOBERTO OROZCO BORJA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL CANDELARIA</option>
+            <option>INSTITUCIÓN EDUCATIVA ETNOEDUCATIVA DEPARTAMENTAL TUCURINCA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL SIMON BOLIVAR</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL COLOMBIA</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL MARIA INMACULADA</option>
+            <option>INSTITUCIÓN EDUCATIVA TÉCNICA DEPARTAMENTAL DE GUAIMARO</option>
+            <option>INSTITUCIÓN EDUCATIVA ETNOEDUCATIVA  DEPARTAMENTAL MACONDO</option>
+            <option>INSTITUCIÓN ETNOEDUCATIVA DEPARTAMENTAL JOSE BENITO VIVES DE ANDREIS</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL TOMAS HERRERA CANTILLO</option>
+            <option>INSTITUCIÓN EDUCATIVA DEPARTAMENTAL EL CONSUELO</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">NOMBRE</b>
+          <input class="form-control" formControlName="nombreDocente" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">CÉDULA</b>
+          <input class="form-control" formControlName="cedulaDocente" type="number">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">ÁREA EDUCATIVA DOCENTE INCAPACITADO</b>
+          <select formControlName="areaEducativa" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput1">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Docente de Prescolar">Docente de Prescolar</option>
+          <option value="Docente de Primaria">Docente de Primaria</option>
+          <option value="Docente de Matematica">Docente de Matematicas</option> 
+          <option value="Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia">Docente de ciencias Sociales, Historia, Geografia, Constitucion politica y democracia</option>
+          <option value="Docente de humanidades y lengua castellana">Docente de humanidades y lengua castellana</option> 
+          <option value="Docente de ciencias naturales y educacion ambiental">Docente de ciencias naturales y educacion ambiental</option> 
+          <option value="Docente de ciencias naturales - quimica">Docente de ciencias naturales - quimica</option> 
+          <option value="Docente de ciencias naturales - fisica">Docente de ciencias naturales - fisica</option> 
+          <option value="Docente de tecnologia e informatica">Docente de tecnologia e informatica</option> 
+          <option value="Docente de Idioma extranjero ingles">Docente de idioma extranjero - ingles</option> 
+          <option value="Docente en educacion religiosa">Docente en educacion religiosa</option> 
+          <option value="Docente en educacion artistica - danzas">Docente en educacion artistica - danzas</option> 
+          <option value="Docente en educacion artistica - artes plasticas">Docente en educacion artistica - artes plasticas</option> artes plasticas
+          <option value="Docente en educacion artistica - artes escenicas">Docente en educacion artistica - artes escenicas</option> 
+          <option value="Docente en educacion artistica - musica">Docente en educacion artistica - musica</option> 
+          <option value="Docente en educacion fisica, recreacion y deporte">Docente en educacion fisica, recreacion y deporte</option> 
+          <option value="Docente en educacion etica y valores humanos">Docente en educacion etica y valores humanos</option> 
+          <option value="Docente de ciencias economicas y politicas">Docente de ciencias economicas y politicas</option> 
+          <option value="Docente de filosofia">Docente de filosofia</option> 
+        </select>   
+               
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">NÚMERO  DE INCAPACIDAD</b>
+        <input class="form-control" formControlName="numeroIncapacidad" type="text">
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">TIPO DE VINCULACIÓN</b>
+        <select formControlName="tipoVinculacion" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput2">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Vacancia temporal">Vacancia temporal</option>
+          <option value="Vacancia definitiva">Vacancia definitiva</option>
+          <option value="En propiedad">En propiedad</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">CARGO</b>
+        <select formControlName="cargo" placeholder="Seleccione una opción" class="form-control"
+          id="exampleFormControlInput3">
+          <option value="" disabled selected>Seleccione una opción</option>
+          <option value="Docente de area">Docente de area</option>
+          <option value="Docente orientador">Docente orientador</option>
+          <option value="Directivo docente - Rector">Directivo docente - Rector</option>
+          <option value="Directivo docente - Coordinaro">Directivo docente - Coordinador</option>
+          <option value="Directivo docente - Director rural">Directivo docente - Director rural</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-sm-6 col-md-4 my-1">
+        <b class="form-group-label">TIPO DE INCAPACIDAD</b>
+        <select formControlName="tipoIncapacidad" placeholder="Seleccione una opción" class="form-control"
+        id="exampleFormControlInput4">
+        <option value="" disabled selected>Seleccione una opción</option>
+        <option value="Licencia de enfermedad">Licencia de enfermedad</option>
+        <option value="Licencia de maternidad">Licencia de maternidad</option>
+      </select>      
+    </div>
+
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">DÍAS DE INCAPACIDAD</b>
+      <input class="form-control" formControlName="days" type="number">
+    </div>
+    
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">NÚMERO SAC </b>
+      <input class="form-control" formControlName="numsac" type="text">
+    </div>
+
+
+    <div class="col-12 col-sm-6 col-md-4 ">
+      <b class="form-group-label">FECHA DE INCAPACIDAD</b>
+      <mat-form-field appearance="outline" >
+          <mat-label>Fecha</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate placeholder="Filtro inicio" formControlName="fechaInicio">
+              <input matEndDate placeholder="Filtro fin" formControlName="fechaFin">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
+  </div>
+
+    <div class="col-12 col-sm-6 col-md-4 my-1">
+      <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
+      <input type="file"  #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
+    </div>
+      <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 ">
+        <button (click)="nextStep()" class="d-flex justify-content-first " style="max-width: 90px; color: white;">Siguiente</button>
+
+      </div>
+      </div>
+
+
+
+
+
+      <div *ngIf="step === 2" class="row">
+        <h3 class="d-flex justify-content-center align-items-center">
+          DATOS PROFESOR REMPLAZO
+        </h3>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">TIPO DE TRÁMITE</b>
+          <select formControlName="tipoTramiteRemplazo" placeholder="Seleccione una opción" class="form-control"
+            id="exampleFormControlInput5">
+            <option value="" disabled selected>Seleccione una opción</option>
+            <option value="Primera vez">Primera vez</option>
+            <option value="Prorroga">Prorroga</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 my-1">
+          <b class="form-group-label">NOMBRE</b>
+          <input class="form-control" formControlName="nombreRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">CÉDULA </b>
+          <input class="form-control" formControlName="cedulaRemplazo" type="number">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">PROFESIÓN </b>
+          <input class="form-control" formControlName="profesionRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">UNIVERSIDAD </b>
+          <input class="form-control" formControlName="universidadRemplazo" type="text">
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4 ">
+          <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
+          <input type="file"  #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
+        </div>
+
+        <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
+
+          <button (click)="prevStep()" style="color: white;">Atrás</button>
+          <button type="button" style="color: white;" class="ajus ms-2" (click)="enviar()">
+            Enviar
+          </button>
+        </div>
+      </div>
+             
+            </form>
+          </div>
+        </div>
+      </div>
+    
+      <footer class="main-footer d-flex justify-content-between align-items-center px-3 ">
+        <div>
+          <strong>
+            &copy; {{year}} 
+            <a href="https://www.gobernaciondelmagdalena.gov.co/">Gobernación del Magdalena</a>.
+          </strong>
+        </div>
+        <div>
+          <b>INCAPACIDADES</b>
+        </div>
+      </footer>
+      </div>
+      <!-- Bootstrap JS -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- </div> -->

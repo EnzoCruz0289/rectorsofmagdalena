@@ -1,0 +1,169 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+  font-family:"Arial Narrow", Arial, sans-serif;
+}
+.logov {
+  height: 51px;
+  width: auto;
+}
+.bloqueo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Centrado vertical y horizontal */
+  background-color: #f4f4f4;
+}
+.navbar .navbar-brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bloqueo-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 300px;
+}
+
+.input-clave {
+  width: 100%;
+  padding: 10px;
+  margin: 1rem 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.btn-verificar {
+  background-color: #4cafef;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-verificar:hover {
+  background-color: #3a9bdc;
+}
+
+.error {
+  color: red;
+  margin-top: 0.5rem;
+  font-size: 14px;
+}
+
+.navbar {
+  padding: 12px;
+  background: #0071BB;
+}
+
+.navbar .navbar-brand {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.navbar img {
+  height: 40px;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.form-group-label {
+  display: block;
+  text-align: left;
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.form-control {
+  text-align: left;
+}
+.main-content {
+  flex: 1;
+  display: block; /* Cambiamos flex para que fluya naturalmente */
+  padding: 20px;
+}
+
+
+button{
+    border: 2px solid rgb(0, 17, 252);
+    border-radius: 8px;
+    background-color: #007bff;
+}
+
+
+.logo-img {
+  max-height: 330px;
+  margin: 0 auto 10px auto;
+  margin-top: -105px; 
+
+}
+
+
+.card {
+  width: 100%;
+  max-width: auto;
+  max-height: 80vh;
+  overflow-y: auto;
+  background-color: #d1d1d1;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  margin-top: -90px;
+  }  
+footer {
+  background: #0071BB;
+  color: #fff;
+  text-align: center;
+  padding: 7px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .navbar .navbar-brand {
+    font-size: 16px;
+  }
+
+  .header-logo {
+    max-height: 80px;
+  }
+
+  .main-content {
+    height: auto;
+    padding: 20px;
+  }
+
+  .main-content .input-container {
+    width: 90%;
+  }
+}
+
+.inputs-container {
+  width: 100%;
+  max-width: 1300px;
+}
+
+.main-footer {
+  background-color: #0050a7;
+  color: white;
+  font-size: 14px;
+  position: relative;
+  width: 100%;
+}
+.main-footer a {
+  color: #ffffff;
+  text-decoration: underline;
+}
