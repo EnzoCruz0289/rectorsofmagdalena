@@ -30,48 +30,125 @@ export class SupabaseService {
       .replace(/[^\w.-]/g, '');           // Elimina cualquier carácter no válido
   }
 
-  async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string> {
+  // async subirArchivo(file: File, cedula: string, tipo: 'cv' | 'incapacidad'): Promise<string | null> {
+  //   try {
+  //     const nombreLimpio = this.limpiarNombreArchivo(file.name);
+  //     const timestampNow = Date.now();
+  //     const nombreArchivo = `${cedula}/${timestampNow}-${nombreLimpio}`;
+  
+  //     // 1️⃣ Subir el archivo con upsert
+  //     const { data, error } = await this.supabase.storage
+  //       .from('files')
+  //       .upload(nombreArchivo, file, { upsert: true });
+  
+  //     // 2️⃣ Verificar errores de subida
+  //     if (error || !data?.path) {
+  //       console.error('❌ Error al subir archivo:', error?.message || 'Subida incompleta');
+  //       alert('La carga del archivo falló. Por favor, inténtalo de nuevo.');
+  //       return null; // Detiene la ejecución en el componente
+  //     }
+  
+  //     // 3️⃣ Obtener URL pública
+  //     const { data: publicUrlData } = this.supabase
+  //       .storage
+  //       .from('files')
+  //       .getPublicUrl(nombreArchivo);
+  
+  //     const publicUrl = publicUrlData?.publicUrl;
+  //     if (!publicUrl) {
+  //       console.error('❌ Error al generar URL pública.');
+  //       alert('Error al generar el enlace del archivo. Inténtalo de nuevo.');
+  //       return null;
+  //     }
+  
+  //     // 4️⃣ Confirmar que el archivo se pueda listar (verificación final opcional)
+  //     const carpeta = cedula;
+  //     const { data: lista } = await this.supabase.storage.from('files').list(carpeta);
+  //     const existe = lista?.some(f => f.name === `${timestampNow}-${nombreLimpio}`);
+  
+  //     if (!existe) {
+  //       console.error('⚠️ El archivo no se encuentra en el bucket tras subirlo.');
+  //       alert('Hubo un problema con la carga del archivo. Inténtalo nuevamente.');
+  //       return null;
+  //     }
+  
+  //     return publicUrl; // ✅ Todo correcto
+  
+  //   } catch (err) {
+  //     console.error('Error inesperado en subirArchivo:', err);
+  //     alert('Ocurrió un error al subir el archivo. Por favor, revisa tu conexión e inténtalo de nuevo.');
+  //     return null;
+  //   }
+  // }
+
+  async subirArchivo(
+    file: File,
+    cedula: string,
+    tipo: 'cv' | 'incapacidad',
+    onProgress?: (porcentaje: number) => void
+  ): Promise<string> {
     const nombreLimpio = this.limpiarNombreArchivo(file.name);
     const timestampNow = Date.now();
     const nombreArchivo = `${cedula}/${timestampNow}-${nombreLimpio}`;
-
-    const { data, error } = await this.supabase
-      .storage
-      .from('files')
-    .upload(nombreArchivo, file); 
   
-    if (error) {
-      // console.error('Error al subir archivo:', error.message);
-      throw new Error('No se pudo subir el archivo');
+    // 🔹 Crear un stream de lectura para calcular progreso
+    const total = file.size;
+    let cargado = 0;
+  
+    const reader = file.stream().getReader();
+    const chunks: Uint8Array[] = [];
+  
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      cargado += value.length;
+      if (onProgress) {
+        const porcentaje = Math.round((cargado / total) * 100);
+        onProgress(porcentaje); // 🔹 llama al callback
+      }
     }
+  
+    const fileBuffer = new Blob(chunks, { type: file.type });
+  
+    // 🔹 Subir el archivo
+    const { data, error } = await this.supabase.storage
+      .from('files')
+      .upload(nombreArchivo, fileBuffer, {
+        upsert: false
+      });
+  
+    if (error) throw new Error(`Error al subir archivo: ${error.message}`);
   
     const { publicUrl } = this.supabase
       .storage
       .from('files')
       .getPublicUrl(nombreArchivo).data;
   
-    if (!publicUrl) {
-      throw new Error('No se pudo obtener la URL pública del archivo');
-    }
+    if (!publicUrl) throw new Error('No se pudo obtener la URL pública');
   
     return publicUrl;
   }
 
-  async guardarRector(cedula: string, incapacidadId: string, hojaVidaUrl: string, incapacidadUrl: string) {
-  const { error } = await this.supabase
-    .from('IncapacidadesRectores')
-    .insert({
-      cedula : String(cedula).trim(),
-      incapacidad_id: incapacidadId,   // 👈 importante usar snake_case si así lo tienes en la tabla
-      archivo_cv_url: hojaVidaUrl,
-      archivo_incapacidad_url: incapacidadUrl,
-      fecha_incapacidad: new Date().toISOString()
-    });
 
-  if (error) {
-    console.error('Error al guardar en la tabla:', error.message);
+  async guardarRector(cedula: string, incapacidadId: string, hojaVidaUrl: string, incapacidadUrl: string) {
+    const { error } = await this.supabase
+      .from('IncapacidadesRectores')
+      .insert({
+        cedula: String(cedula).trim(),
+        incapacidadId: incapacidadId,
+        archivo_1_url: hojaVidaUrl,
+        archivo_2_url: incapacidadUrl,
+        numero_secuencia: 1,
+        fecha_incapacidad: new Date().toISOString(),
+            });
+  
+    if (error) {
+      console.error('Error al guardar en Supabase:', error.message);
+    } else {
+      console.log('✅ Datos guardados correctamente');
+    }
   }
-}
 
   async obtenerArchivosPorCedula(cedula: string): Promise<{ cv: string | null, incapacidad: string | null }> {
     const { data, error } = await this.supabase

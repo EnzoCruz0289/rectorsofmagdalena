@@ -35,6 +35,10 @@ export class DatasedComponent {
   claveIngresada = '';
   errorClave = false;
   step = 1;
+  subiendoArchivo1 = false;
+  progresoArchivo1 = 0;
+  subiendoArchivo2 = false;
+  progresoArchivo2 = 0;
   
   constructor(private fb: FormBuilder, private supabase: SupabaseService, private firebase: FirebaseService,
     private loaderService: LoaderService) {
@@ -267,24 +271,9 @@ limpiarInputsArchivo() {
   }
 
   async enviar() {
+    
     this.loaderService.show();
 
-    const formData = this.myForm.getRawValue(); // ✅ CAMBIADO AQUÍ
-    const observation = formData.tipoTramiteDocente?.toLowerCase();
-    const observationRemplazo = formData.tipoTramiteRemplazo?.toLowerCase();
-    const cedula = String(formData.cedulaDocente).trim();
-    const fecha = new Date().toISOString();  // para fecha de subida
-    let fechaa = new Date();
-      let mes = (fechaa.getMonth() + 1).toString().padStart(2, '0');
-      let dia = fechaa.getDate().toString().padStart(2, '0');
-      let año = fechaa.getFullYear();
-      let hora = fechaa.getHours().toString().padStart(2, '0');
-      let min = fechaa.getMinutes().toString().padStart(2, '0');
-
-      formData.fechaReal = new Date(); // si quieres mantenerla
-      formData.fechaRegistrocomp = `${dia}/${mes}/${año} ${hora}:${min}`;
-      formData.fechaRegistro = new Date(); // esta se usará para filtrar
-    // Validar el formulario primero
     if (this.myForm.invalid) {
       Swal.fire({
         icon: 'warning',
@@ -295,6 +284,10 @@ limpiarInputsArchivo() {
       this.loaderService.hide();
       return;
     }
+
+    const formData = this.myForm.getRawValue();
+    const observation = formData.tipoTramiteDocente?.toLowerCase();
+    const cedula = String(formData.cedulaDocente).trim();
 
     if (observation === 'prorroga') {
       const existe = await this.firebase.cedulaExiste(cedula);
@@ -311,122 +304,184 @@ limpiarInputsArchivo() {
     
   
     try {
-      // 1. Subir archivos
-      let urlArchivo1: string ='';
-      let urlArchivo2: string ='';
-      const identificadorUnico = await this.firebase.incrementarContador();
+      
+      this.loaderService.show();
 
+      const formData = this.myForm.getRawValue();
+      const cedula = String(formData.cedulaDocente).trim();
+      const ahora = new Date();
+      const dia = ahora.getDate().toString().padStart(2, '0');
+      const mes = (ahora.getMonth() + 1).toString().padStart(2, '0');
+      const año = ahora.getFullYear();
+      const hora = ahora.getHours().toString().padStart(2, '0');
+      const min = ahora.getMinutes().toString().padStart(2, '0');
+
+      formData.fechaReal = ahora;
+      formData.fechaRegistro = ahora;
+      formData.fechaRegistrocomp = `${dia}/${mes}/${año} ${hora}:${min}`;
+      // ✅ FIN DEL BLOQUE DE FECHAS
+
+      if (this.myForm.invalid) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Formulario incompleto',
+          text: 'Por favor, complete todos los campos.'
+        });
+        this.myForm.markAllAsTouched();
+        this.loaderService.hide();
+        return;
+      }
+    
+      // 🔹 Genera un identificador único para este envío
+      const identificadorUnico = await this.firebase.incrementarContador();
+    
+      // 🔹 Variables donde guardaremos las URLs subidas
+      let urlArchivo1: string | null = null;
+      let urlArchivo2: string | null = null;
+    
+      // -------------------------
+      // SUBIDA SEGURA ARCHIVO 1
+      // -------------------------
       if (this.urlArchivo1) {
-        urlArchivo1 = await this.supabase.subirArchivo(this.urlArchivo1, cedula, 'incapacidad');
-        if (!urlArchivo1) {
-          throw new Error('Error al subir el archivo de incapacidad.');
+        try {
+          this.subiendoArchivo1 = true;
+      
+          // Llamas al servicio que sube el archivo
+          urlArchivo1 = await this.supabase.subirArchivo(
+            this.urlArchivo1,
+            cedula,
+            'incapacidad',
+            (p) => { this.progresoArchivo1 = p; }
+          );
+      
+        } catch (err) {
+          this.subiendoArchivo1 = false;
+          this.loaderService.hide();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al subir archivo de incapacidad',
+            text: 'No se pudo completar la subida. Verifique su conexión o intente nuevamente.'
+          });
+          return; // 🚫 Detiene todo el proceso
+        } finally {
+          this.subiendoArchivo1 = false;
         }
       }
       
+      // -------------------------
+      // SUBIDA SEGURA ARCHIVO 2
+      // -------------------------
       if (this.urlArchivo2) {
-        urlArchivo2 = await this.supabase.subirArchivo(this.urlArchivo2, cedula, 'cv');
-        if (!urlArchivo2) {
-          throw new Error('Error al subir el archivo de hoja de vida.');
+        try {
+          this.subiendoArchivo2 = true;
+      
+          urlArchivo2 = await this.supabase.subirArchivo(
+            this.urlArchivo2,
+            cedula,
+            'cv',
+            (p) => { this.progresoArchivo2 = p; }
+          );
+      
+        } catch (err) {
+          this.subiendoArchivo2 = false;
+          this.loaderService.hide();
+          Swal.fire({
+            icon: 'error',
+            title: 'Error al subir archivo de hoja de vida',
+            text: 'No se pudo completar la subida. Verifique su conexión o intente nuevamente.'
+          });
+          return; // 🚫 Detiene el envío del formulario
+        } finally {
+          this.subiendoArchivo2 = false;
         }
       }
-  
-      // 2. Obtener número de secuencia
+    
+      // ✅ Si falta el archivo de incapacidad, detener el proceso
+      if (!urlArchivo1) {
+        this.loaderService.hide();
+        Swal.fire({
+          icon: 'error',
+          title: 'Archivo faltante',
+          text: 'Debe subir el archivo de incapacidad antes de enviar.'
+        });
+        return;
+      }
+    
+      // -----------------------------------
+      //  Una vez subidos correctamente
+      // -----------------------------------
       const lista = await this.supabase.obtenerTodasIncapacidadesPorCedula(cedula);
       const numeroSecuencia = lista.length + 1;
-  
-      // 3. Insertar en la tabla Supabase
+    
       const { error } = await this.supabase.supabase
         .from('IncapacidadesRectores')
         .insert({
-          cedula: cedula,    
-          incapacidadId: identificadorUnico, 
+          cedula,
+          incapacidadId: identificadorUnico, // 👈 usa el nombre correcto según tu tabla
           archivo_1_url: urlArchivo1,
           archivo_2_url: urlArchivo2,
-          fecha_incapacidad: formData.fecha_incapacidad || fecha,
+          fecha_incapacidad: new Date().toISOString(),
           dias_incapacidad: formData.days,
           numero_secuencia: numeroSecuencia
         });
-  
+    
       if (error) {
-        console.error('❌ Error al guardar en Supabase:', error.message);
-        Swal.fire({ icon: 'error', title: 'Error al guardar en Supabase' });
-        return;
+        throw new Error('Error al guardar en Supabase: ' + error.message);
       }
-  
-      // 4. Guardar en Firebase (si aplica)
+    
+      // 🔹 Guardar en Firebase si aplica
       const yaExiste = await this.firebase.cedulaExiste(cedula);
       if (!yaExiste) {
         await this.firebase.guardarFormularioPrincipal(formData);
       }
-  
-      let nombreRemplazo = this.myForm.value.nombreRemplazo || null;
-      let cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
-      let tipoTramiteRemplazo = this.myForm.value.tipoTramiteRemplazo || null;
-
-   if (observationRemplazo === 'prorroga') {
-  const ultimo = await this.firebase.obtenerUltimaIncapacidadPorCedula(cedula); 
-  if (ultimo) {
-    nombreRemplazo = ultimo['nombreRemplazo'] ?? nombreRemplazo;
-    cedulaRemplazo = ultimo['cedulaRemplazo'] ?? cedulaRemplazo;
-    formData.tipoTramiteRemplazo = 'Prorroga';
-
-
-  }else if (observation === 'primera vez') {
-    // 🔹 Asegurar que se guarde lo NUEVO
-    nombreRemplazo = this.myForm.value.nombreRemplazo || null;
-    cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
-    formData.tipoTramiteRemplazo = 'Primera vez';
-
-
-  }
-} else {
-  // 🔹 Caso "Primera vez"
-  nombreRemplazo = this.myForm.value.nombreRemplazo || null;
-  cedulaRemplazo = this.myForm.value.cedulaRemplazo || null;
-  tipoTramiteRemplazo = 'primera vez'; // 👈 acá también
-}
-
-
-      await this.firebase.guardarIncapacidad(
-  cedula,
-  formData.days, 
-  nombreRemplazo,       // ← de último registro
-  this.myForm.value.fechaInicio || null, 
-  this.myForm.value.fechaFin || null, 
-  cedulaRemplazo,       // ← de último registro
-  tipoTramiteRemplazo,  // ← de último registro
-  identificadorUnico
-);
-          
-  
-      Swal.fire({ 
-        icon: 'success', 
-        title: 'Guardado correctamente',
-        html: `<b style="font-size:18px; color:#000">IDENTIFICADOR UNICO:</b> <b style="font-size:22px; color:red">000${identificadorUnico}</b> <br>
-        <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b><b style="font-size:22px; color:red">    ${this.myForm.value.cedulaDocente}</b>`,
-        didOpen: async () => {
-          await new Promise(resolve => setTimeout(resolve, 300)); 
-          const modal = document.querySelector('.swal2-popup') as HTMLElement;
     
+      await this.firebase.guardarIncapacidad(
+        cedula,
+        formData.days,
+        this.myForm.value.nombreRemplazo || null,
+        this.myForm.value.fechaInicio || null,
+        this.myForm.value.fechaFin || null,
+        this.myForm.value.cedulaRemplazo || null,
+        this.myForm.value.tipoTramiteRemplazo || 'primera vez',
+        identificadorUnico
+      );
+    
+      Swal.fire({
+        icon: 'success',
+        title: 'Guardado correctamente',
+        html: `
+          <b style="font-size:18px; color:#000">IDENTIFICADOR ÚNICO:</b> 
+          <b style="font-size:22px; color:red">000${identificadorUnico}</b><br>
+          <b style="font-size:18px; color:#000">DOCENTE INCAPACITADO:</b>
+          <b style="font-size:22px; color:red">${this.myForm.value.cedulaDocente}</b>
+        `,
+        didOpen: async () => {
+          // Esperar un poquito para que el modal se renderice correctamente
+          await new Promise(resolve => setTimeout(resolve, 300));
+      
+          const modal = document.querySelector('.swal2-popup') as HTMLElement;
           if (modal) {
             html2canvas(modal).then(canvas => {
               const imgData = canvas.toDataURL('image/png');
               const link = document.createElement('a');
               link.href = imgData;
-              link.download = 'captura_incapacidad.png';
+              link.download = `soporte_incapacidad_${this.myForm.value.cedulaDocente}.png`;
               link.click();
             });
           }
         }
       });
+    
       this.limpiarInputsArchivo();
       this.myForm.reset();
-      // await this.obtenerTotalDesdeFirebase(); // Actualiza el contador sin recargar la página
-
-  
-    } catch (e) {
-      console.error('Error general:', e);
-      Swal.fire({ icon: 'error', title: 'Error general' });
+    
+    } catch (error) {
+      console.error('Error general:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error general',
+        text: String("Compruebe su conexion a internet")
+      });
     } finally {
       this.loaderService.hide();
     }

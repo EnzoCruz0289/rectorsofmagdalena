@@ -349,10 +349,22 @@
       </mat-form-field>
   </div>
 
-    <div class="col-12 col-sm-6 col-md-4 my-1">
-      <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
-      <input type="file"  #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
+  <div class="col-12 col-sm-6 col-md-4 my-1">
+    <b class="form-group-label">INCAPACIDAD DEL DOCENTE TRANSCRITA POR FOMAG</b>
+    <input type="file" #inputArchivo1 (change)="onFileChange($event, 'incapacidad')">
+  
+    <!-- 🔹 Barra de progreso para incapacidad -->
+    <div *ngIf="subiendoArchivo1" class="my-2">
+      <p>Subiendo incapacidad: {{ progresoArchivo1 }}%</p>
+      <div class="progress">
+        <div
+          class="progress-bar progress-bar-striped progress-bar-animated"
+          [style.width.%]="progresoArchivo1">
+        </div>
+      </div>
     </div>
+  </div>
+
       <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 ">
         <button (click)="nextStep()" class="d-flex justify-content-first " style="max-width: 90px; color: white;">Siguiente</button>
 
@@ -398,9 +410,20 @@
           <input class="form-control" formControlName="universidadRemplazo" type="text">
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4 ">
+        <div class="col-12 col-sm-6 col-md-4">
           <b class="form-group-label">HOJA DE VIDA DEL REEMPLAZO</b>
-          <input type="file"  #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
+          <input type="file" #inputArchivo2 (change)="onFileChange($event, 'hojaDeVida')">
+        
+          <!-- 🔹 Barra de progreso para hoja de vida -->
+          <div *ngIf="subiendoArchivo2" class="my-2">
+            <p>Subiendo hoja de vida: {{ progresoArchivo2 }}%</p>
+            <div class="progress">
+              <div
+                class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+                [style.width.%]="progresoArchivo2">
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="d-flex justify-content-first col-12 col-sm-6 col-md-11 mt-2">
