@@ -113,10 +113,11 @@ export class SupabaseService {
   
     // 🔹 Subir el archivo
     const { data, error } = await this.supabase.storage
-      .from('files')
-      .upload(nombreArchivo, fileBuffer, {
-        upsert: false
-      });
+  .from('files')
+  .upload(nombreArchivo, fileBuffer, {
+    cacheControl: '3600',
+    upsert: true, // ✅ CORREGIDO
+  });
   
     if (error) throw new Error(`Error al subir archivo: ${error.message}`);
   

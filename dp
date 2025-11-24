@@ -1,0 +1,36 @@
+* [33mbe0a85a[m[33m ([m[1;36mHEAD -> [m[1;32mdesarrollo[m[33m, [m[1;31morigin/desarrollo[m[33m, [m[1;31morigin/HEAD[m[33m)[m ajuste para subir archivo con carga
+*   [33m2a16f69[m Resuelto conflicto, manteniendo mi versión actual
+[32m|[m[33m\[m  
+[32m|[m * [33m7d1e22e[m[33m ([m[1;32mrespaldo-commits[m[33m, [m[1;32mdesarrollo-remoto[m[33m)[m Terminado para pruebas
+[32m|[m * [33m919d15c[m Correcion de acceso a data
+[32m|[m * [33m7ed36f7[m Ajuste formulario ied
+[32m|[m *   [33m1ee8346[m Merge branch 'desarrollo' of https://github.com/EnzoCruz0289/rectorsofmagdalena into desarrollo
+[32m|[m [34m|[m[35m\[m  
+[32m|[m [34m|[m * [33mc89a2a6[m Completed form and permission correction
+[32m|[m * [35m|[m [33m8ca37b2[m Correccion de errores y parametrizar IED
+[32m|[m [35m|[m[35m/[m  
+[32m|[m * [33m57b0fa5[m end 2
+[32m|[m * [33m6731ed7[m actualizacion de doc
+[32m|[m * [33m86e95e1[m MEJORA DE INGRESO DE DATOS
+[32m|[m * [33m60365b2[m modification of information provided
+[32m|[m * [33mbb8fda8[m block access and enter keys
+[32m|[m * [33mf9694cc[m history settings
+[32m|[m * [33m76bec78[m unique identifier and constancy
+[32m|[m * [33m7afb0ff[m Casi finalizado
+[32m|[m * [33m736bad0[m author modifications
+[32m|[m * [33m2ac9117[m settings
+[32m|[m * [33m3dbc53d[m add date filter
+[32m|[m * [33m76ed234[m improved styles
+[32m|[m * [33ma47f2e5[m load method done
+[32m|[m * [33m1d8c19b[m error resolved  in file name
+[32m|[m * [33mb98f752[m Configuration routes and styles
+[32m|[m * [33m194b541[m No permitir ingresar cedulas repetidas
+[32m|[m * [33mf2c3029[m add Login
+[32m|[m * [33mec84ec3[m Add dowloads for second sight
+[32m|[m * [33m59ec636[m Add method of filter
+[32m|[m * [33md6733a5[m supabase solved insert method
+[32m|[m * [33mac47961[m Intento 1 de integrar la base da datos SQL para archivos
+[32m|[m * [33m9cac4c1[m Connection to the database
+[32m|[m * [33m3e150e9[m Primer commit del proyecto local en rama desarrollo
+[32m|[m * [33m6d4f3f2[m initial commit
+* [33maa70adb[m[33m ([m[1;32mrespaldo-mi-commit[m[33m, [m[1;32mrecuperar-codigo[m[33m)[m colors, sources and logo corrected

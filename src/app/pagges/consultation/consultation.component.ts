@@ -94,23 +94,25 @@ export class ConsultationComponent {
     
   }
 
-  applyFilterFech(startInput: string, endInput: string) {
+  async applyFilterFech(startInput: string, endInput: string) {
     this.loaderService.show();
+  
     const startDate = new Date(startInput);
     const endDate = new Date(endInput);
     endDate.setHours(23, 59, 59, 999);
-
-    // console.log('Start:', startDate, 'End:', endDate);
-
+  
     if (startInput && endInput) {
-      this.filterprest.getFechFiltered(startDate, endDate).subscribe(data => {
+      try {
+        const data = await this.filterprest.getFechFiltered(startDate, endDate);
         this.dataSource = data;
-        this.loaderService.hide(); // 👈 mover aquí
-      });
-      
+      } catch (error) {
+        console.error('Error filtrando fechas:', error);
+      } finally {
+        this.loaderService.hide();
+      }
     } else {
       this.dataSource = [];
-      this.loaderService.hide(); // 👈 Si no hay filtro, apaga el loader
+      this.loaderService.hide();
     }
   }
 
